@@ -27,7 +27,7 @@ func main() {
 		if i == 0 {
 			continue
 		}
-		BSSIDs = append(BSSIDs, record[0])
+		BSSIDs = append(BSSIDs, record[0] + record[3])
 	}
 
 	file, err = os.OpenFile("onlyBSSID",os.O_CREATE|os.O_RDWR, 0777)
