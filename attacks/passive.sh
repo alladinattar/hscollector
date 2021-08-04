@@ -3,7 +3,7 @@
 
 main(){
 	airmon-ng check kill
-	airmon-ng start wlan0mon
+	airmon-ng start wlan1mon
 
 	echo "Start airodump.."
 	timeout 5 airodump-ng -w /home/kali/shakes wlan0mon < /dev/null > /dev/null   
