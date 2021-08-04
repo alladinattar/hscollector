@@ -3,10 +3,10 @@
 
 main(){
 	airmon-ng check kill
-	airmon-ng start wlan1mon
+	airmon-ng start wlan1
 
 	echo "Start airodump.."
-	timeout 5 airodump-ng -w /home/kali/shakes wlan0mon < /dev/null > /dev/null   
+	timeout 5 airodump-ng -w /home/kali/shakes wlan0 < /dev/null > /dev/null   
 	
 	echo "Clean cap file.."
 	output=`wpaclean cleanshakes.cap shakes-01.cap > /dev/null`
