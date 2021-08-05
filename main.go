@@ -10,7 +10,8 @@ import (
 )
 
 var catAddr string = "192.168.1.72"
-func main(){
+
+func main() {
 	l := log.New(os.Stdout, "", log.LstdFlags)
 
 	l.Println("check hashcat files ...")
@@ -21,7 +22,7 @@ func main(){
 		}
 
 		r := mux.NewRouter()
-		r.HandleFunc("/result", func(w http.ResponseWriter, r *http.Request){
+		r.HandleFunc("/result", func(w http.ResponseWriter, r *http.Request) {
 		})
 		s := http.Server{
 			Addr:         ":9000",
@@ -30,12 +31,6 @@ func main(){
 			ReadTimeout:  1 * time.Second,
 			WriteTimeout: 1 * time.Second,
 		}
-		go func() {
-			err := s.ListenAndServe()
-			if err != nil {
-				l.Fatal(err)
-			}
-		}()
 
 		for _, f := range files {
 			l.Println(f.Name())
@@ -45,13 +40,17 @@ func main(){
 			}
 			defer file.Close()
 
-			_ , err = http.Post("http://" + catAddr + ":9000/upload", "multipart/form-data", file)
-			if err!=nil{
+			_, err = http.Post("http://"+catAddr+":9000/upload", "multipart/form-data", file)
+			if err != nil {
 				l.Println("failed send file")
 			}
 			l.Println(f.Name() + " uploaded")
 		}
-	}else{
+		err = s.ListenAndServe()
+		if err != nil {
+			l.Fatal(err)
+		}
+	} else {
 		l.Println("no required directory")
 	}
 }
