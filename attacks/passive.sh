@@ -26,11 +26,11 @@ checkHandshakes(){
 			touch /home/kali/shakes/.counter
 			echo "1" > /home/kali/shakes/.counter
 		fi
+		rm /home/kali/cleanshakes.cap
 
 	else
 		echo "No handshakes"
 	fi
-	rm /home/kali/cleanshakes.cap
 	rm /home/kali/shakes-*
 }
 
