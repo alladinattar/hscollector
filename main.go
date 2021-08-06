@@ -56,7 +56,6 @@ func main() {
 					Status   string `json:"status"`
 				}
 				asd, _ := ioutil.ReadAll(resp.Body)
-				fmt.Println(string(asd))
 				err := json.Unmarshal(asd, &response)
 				if err != nil {
 					l.Println("Failed decode response:", err)
