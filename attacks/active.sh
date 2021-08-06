@@ -92,7 +92,7 @@ while getopts "pa" opt
 do
 	case $opt in
 		a)active;;
-		b)passive;;
+		p)passive;;
 		*)echo "Unknown option"
 	esac
 done
