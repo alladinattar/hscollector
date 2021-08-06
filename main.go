@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"time"
 )
 
 var catAddr string = "192.168.1.72:9000"
@@ -37,7 +38,7 @@ func main() {
 
 			r, _ := http.NewRequest("POST", "http://"+catAddr+"/upload", body)
 			r.Header.Add("Content-Type", writer.FormDataContentType())
-			client := &http.Client{}
+			client := &http.Client{Timeout: 100 * time.Second}
 			resp, err := client.Do(r)
 			if err != nil {
 				l.Println("Failed send file")
