@@ -57,16 +57,19 @@ func main() {
 				}
 				asd, _ := ioutil.ReadAll(resp.Body)
 				fmt.Println(string(asd))
-				err := json.NewDecoder(resp.Body).Decode(&response)
+				err := json.Unmarshal(asd, &response)
 				if err != nil {
 					l.Println("Failed decode response:", err)
 				}
-				json.MarshalIndent(response, "", "  ")
+				output, err := json.MarshalIndent(response, "", "  ")
+				if err != nil {
+					l.Println("Failed unmarshall", err)
+				}
+				fmt.Println(string(output))
 			}
 			log.Println(resp.StatusCode)
 
 		}
-
 	} else {
 		l.Println("no required directory")
 	}
