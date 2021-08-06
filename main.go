@@ -1,15 +1,19 @@
 package main
 
 import (
+	"bytes"
 	"github.com/gorilla/mux"
+	"io"
 	"io/ioutil"
 	"log"
+	"mime/multipart"
 	"net/http"
 	"os"
+	"path/filepath"
 	"time"
 )
 
-var catAddr string = "192.168.1.72"
+var catAddr string = "192.168.1.72:9000"
 
 func main() {
 	l := log.New(os.Stdout, "", log.LstdFlags)
@@ -33,18 +37,20 @@ func main() {
 		}
 
 		for _, f := range files {
-			l.Println(f.Name())
-			file, err := os.Open(f.Name())
-			if err != nil {
-				l.Println("Error file open")
-			}
+			filePath := "/home/kali/shakes/" + f.Name()
+			file, _ := os.Open(filePath)
 			defer file.Close()
 
-			_, err = http.Post("http://"+catAddr+":9000/upload", "multipart/form-data", file)
-			if err != nil {
-				l.Println("failed send file")
-			}
-			l.Println(f.Name() + " uploaded")
+			body := &bytes.Buffer{}
+			writer := multipart.NewWriter(body)
+			part, _ := writer.CreateFormFile("file", filepath.Base(file.Name()))
+			io.Copy(part, file)
+			writer.Close()
+
+			r, _ := http.NewRequest("POST", "http://" + catAddr + "/upload", body)
+			r.Header.Add("Content-Type", writer.FormDataContentType())
+			client := &http.Client{}
+			client.Do(r)
 		}
 		err = s.ListenAndServe()
 		if err != nil {
@@ -54,3 +60,7 @@ func main() {
 		l.Println("no required directory")
 	}
 }
+
+
+
+
