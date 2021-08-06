@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -48,11 +49,18 @@ func main() {
 			}
 			defer resp.Body.Close()
 			if resp.StatusCode == 200 {
-				result, err := ioutil.ReadAll(resp.Body)
-				if err != nil {
-					log.Println(err)
+				var response struct {
+					Ssid     string `json:"ssid"`
+					Password string `json:"password"`
+					Mac      string `json:"mac"`
 				}
-				fmt.Println(string(result))
+				err := json.NewDecoder(resp.Body).Decode(&response)
+				if err != nil {
+					l.Println("Failed decode response:", err)
+				}
+				fmt.Println("SSID\t", response.Ssid)
+				fmt.Println("Password\t", response.Password)
+				fmt.Println("MAC\t", response.Mac)
 			}
 			log.Println(resp.StatusCode)
 
