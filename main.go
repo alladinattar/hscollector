@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -59,12 +58,7 @@ func main() {
 				if err != nil {
 					l.Println("Failed decode response:", err)
 				}
-				err = json.NewDecoder(resp.Body).Decode(&response)
-				if err != nil {
-					l.Println("Failed read response", err)
-				}
 				json.MarshalIndent(response, "", "  ")
-				fmt.Println()
 			}
 			log.Println(resp.StatusCode)
 
