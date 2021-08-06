@@ -2,7 +2,7 @@ package main
 
 import (
 	"bytes"
-	"github.com/gorilla/mux"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -10,7 +10,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"time"
 )
 
 var catAddr string = "192.168.1.34:9000"
@@ -23,17 +22,6 @@ func main() {
 		files, err := ioutil.ReadDir("/home/kali/shakes")
 		if err != nil {
 			log.Fatal(err)
-		}
-
-		r := mux.NewRouter()
-		r.HandleFunc("/result", func(w http.ResponseWriter, r *http.Request) {
-		})
-		s := http.Server{
-			Addr:         ":9000",
-			Handler:      r,
-			IdleTimeout:  120 * time.Second,
-			ReadTimeout:  1 * time.Second,
-			WriteTimeout: 1 * time.Second,
 		}
 
 		for _, f := range files {
@@ -50,12 +38,20 @@ func main() {
 			r, _ := http.NewRequest("POST", "http://"+catAddr+"/upload", body)
 			r.Header.Add("Content-Type", writer.FormDataContentType())
 			client := &http.Client{}
-			client.Do(r)
+			resp, err := client.Do(r)
+			if err != nil {
+				l.Println("Failed send file")
+			}
+			if resp.StatusCode == 200 {
+				result, err := ioutil.ReadAll(resp.Body)
+				if err != nil {
+					log.Println(err)
+				}
+				fmt.Println(string(result))
+			}
+
 		}
-		err = s.ListenAndServe()
-		if err != nil {
-			l.Fatal(err)
-		}
+
 	} else {
 		l.Println("no required directory")
 	}
