@@ -38,7 +38,8 @@ active(){
 	trap "rm /home/kali/sha*" EXIT
 	airmon-ng check kill
 	airmon-ng start wlan1
-  	timeout 5 airodump-ng -w /home/kali/shakes wlan1 < /dev/null > /dev/null 
+	echo "Collect AP"
+  	timeout 15 airodump-ng -w /home/kali/shakes wlan1 < /dev/null > /dev/null 
 	counter=0
 
 	while read line
