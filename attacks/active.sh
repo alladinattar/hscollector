@@ -5,7 +5,6 @@ checkHandshakes(){
         echo "Clean cap file.."
         output=`wpaclean /home/kali/cleanshakes.cap /home/kali/shakes-01.cap` #> /dev/null`
 
-	ls /home/kali/
         if [[ "$output" == *"Net"* ]]; then
                 echo "Handshakes detected!!!"
                 if [[ -d /home/kali/shakes ]]
@@ -35,15 +34,14 @@ checkHandshakes(){
         rm /home/kali/shakes-*
 }
 
-main(){
+active(){
 	trap "rm /home/kali/sha*" EXIT
 	airmon-ng check kill
 	airmon-ng start wlan1
-  	timeout 5 airodump-ng -w /home/kali/shakes wlan1 < /dev/null > /dev/null 
-	#ip link set wlan0mon down
-	#iw wlan0mon set monitor control
-	#ip link set wlan0mon up
+	echo "Collect AP"
+  	timeout 15 airodump-ng -w /home/kali/shakes wlan1 < /dev/null > /dev/null 
 	counter=0
+
 	while read line
 	do
 		if [[ $counter -lt 2 ]]
@@ -68,4 +66,29 @@ main(){
 	done < /home/kali/shakes-01.csv
 
 }
-main
+
+passive(){
+	trap 'checkHandshakes' EXIT
+
+        airmon-ng check kill
+        airmon-ng start wlan1
+
+        echo "Start airodump.."
+        airodump-ng -w /home/kali/shakes wlan1 < /dev/null > /dev/null
+}
+
+if [ $# -lt 1 ]
+then
+	echo "Please use -a or -p flag"
+	exit 1
+fi
+
+while getopts "pa" opt
+do
+	case $opt in
+		a)active;;
+		p)passive;;
+		*)echo "Unknown option"
+	esac
+done
+
