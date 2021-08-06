@@ -26,6 +26,9 @@ func main() {
 		}
 
 		for _, f := range files {
+			if f.Name() == ".counter" {
+				continue
+			}
 			filePath := "/home/kali/shakes/" + f.Name()
 			file, _ := os.Open(filePath)
 			defer file.Close()
