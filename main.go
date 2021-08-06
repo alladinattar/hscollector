@@ -61,6 +61,7 @@ func main() {
 				fmt.Println("SSID\t", response.Ssid)
 				fmt.Println("Password\t", response.Password)
 				fmt.Println("MAC\t", response.Mac)
+				fmt.Println()
 			}
 			log.Println(resp.StatusCode)
 
