@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-var catAddr string = "192.168.1.72:9000"
+var catAddr string = "192.168.1.34:9000"
 
 func main() {
 	l := log.New(os.Stdout, "", log.LstdFlags)
@@ -47,7 +47,7 @@ func main() {
 			io.Copy(part, file)
 			writer.Close()
 
-			r, _ := http.NewRequest("POST", "http://" + catAddr + "/upload", body)
+			r, _ := http.NewRequest("POST", "http://"+catAddr+"/upload", body)
 			r.Header.Add("Content-Type", writer.FormDataContentType())
 			client := &http.Client{}
 			client.Do(r)
@@ -60,7 +60,3 @@ func main() {
 		l.Println("no required directory")
 	}
 }
-
-
-
-
