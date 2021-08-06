@@ -22,7 +22,7 @@ func main() {
 	if _, err := os.Stat("/home/kali/shakes"); !os.IsNotExist(err) {
 		files, err := ioutil.ReadDir("/home/kali/shakes")
 		if err != nil {
-			log.Fatal(err)
+			log.Println("Failed read dir with shakes: ", err)
 		}
 
 		for _, f := range files {
