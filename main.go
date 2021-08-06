@@ -41,7 +41,7 @@ func main() {
 			client := &http.Client{Timeout: 100 * time.Second}
 			resp, err := client.Do(r)
 			if err != nil {
-				l.Println("Failed send file")
+				l.Println("Failed send file:", err)
 			}
 			defer resp.Body.Close()
 			if resp.StatusCode == 200 {
