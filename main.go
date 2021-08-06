@@ -50,9 +50,9 @@ func main() {
 			defer resp.Body.Close()
 			if resp.StatusCode == 200 {
 				var response struct {
-					Ssid     string `json:"ssid"`
-					Password string `json:"password"`
-					Mac      string `json:"mac"`
+					Ssid     string `json:"ssid,omitempty"`
+					Password string `json:"password,omitempty"`
+					Mac      string `json:"mac,omitempty"`
 				}
 				err := json.NewDecoder(resp.Body).Decode(&response)
 				if err != nil {
