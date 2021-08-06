@@ -43,6 +43,7 @@ func main() {
 			if err != nil {
 				l.Println("Failed send file")
 			}
+			defer resp.Body.Close()
 			if resp.StatusCode == 200 {
 				result, err := ioutil.ReadAll(resp.Body)
 				if err != nil {
