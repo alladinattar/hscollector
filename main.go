@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -54,6 +55,8 @@ func main() {
 					Mac      string `json:"mac,omitempty"`
 					Status   string `json:"status"`
 				}
+				asd, _ := ioutil.ReadAll(resp.Body)
+				fmt.Println(string(asd))
 				err := json.NewDecoder(resp.Body).Decode(&response)
 				if err != nil {
 					l.Println("Failed decode response:", err)
