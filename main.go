@@ -53,14 +53,17 @@ func main() {
 					Ssid     string `json:"ssid,omitempty"`
 					Password string `json:"password,omitempty"`
 					Mac      string `json:"mac,omitempty"`
+					Status   string `json:"status"`
 				}
 				err := json.NewDecoder(resp.Body).Decode(&response)
 				if err != nil {
 					l.Println("Failed decode response:", err)
 				}
-				fmt.Println("SSID\t", response.Ssid)
-				fmt.Println("Password\t", response.Password)
-				fmt.Println("MAC\t", response.Mac)
+				err = json.NewDecoder(resp.Body).Decode(&response)
+				if err != nil {
+					l.Println("Failed read response", err)
+				}
+				json.MarshalIndent(response, "", "  ")
 				fmt.Println()
 			}
 			log.Println(resp.StatusCode)
