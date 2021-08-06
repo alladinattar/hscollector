@@ -51,6 +51,7 @@ func main() {
 				}
 				fmt.Println(string(result))
 			}
+			log.Println(resp.StatusCode)
 
 		}
 
