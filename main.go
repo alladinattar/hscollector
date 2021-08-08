@@ -20,11 +20,11 @@ var catAddr string = "192.168.1.72:9000"
 func main() {
 	l := log.New(os.Stdout, "", log.LstdFlags)
 
-	l.Println("check hashcat files ...")
+	l.Println("check hashcat files...")
 
 	if _, err := os.Stat("/home/kali/shakes"); !os.IsNotExist(err) {
 		files, _ := ioutil.ReadDir("/home/kali/shakes")
-		l.Println("Found", strconv.Itoa(len(files)), "files")
+		l.Println("Found", strconv.Itoa(len(files)-1), "files")
 
 		files, err := ioutil.ReadDir("/home/kali/shakes")
 		if err != nil {
