@@ -67,8 +67,7 @@ func main() {
 			}
 			defer resp.Body.Close()
 			if resp.StatusCode == 200 {
-				asd, _ := ioutil.ReadAll(resp.Body)
-				body, err := json.MarshalIndent(asd, "", "  ")
+				body, err := json.MarshalIndent(resp.Body, "", "  ")
 				if err != nil {
 					l.Println("Failed decode response:", err)
 				}
