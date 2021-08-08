@@ -69,14 +69,7 @@ func main() {
 			if resp.StatusCode == 200 {
 				sdaf, _ := io.ReadAll(resp.Body)
 				fmt.Println(string(sdaf))
-				/*body, err := json.MarshalIndent(resp.Body, "", "  ")
-				if err != nil {
-					l.Println("Failed decode response:", err)
-				}*/
-
 			}
-			log.Println(resp.StatusCode)
-
 		}
 	} else {
 		l.Println("no required directory")
