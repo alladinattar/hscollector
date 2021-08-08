@@ -8,7 +8,7 @@ checkUtils() {
     echo "sudo apt install hcxtools"
     echo "sudo cp /usr/lib/hashcat-utils/cap2hccapx.bin /bin/cap2hccapx"
   fi
-
+  exit 1
 }
 
 checkHandshakes() {
