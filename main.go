@@ -38,7 +38,7 @@ func main() {
 			filePath := "/home/kali/shakes/" + f.Name()
 			file, _ := os.Open(filePath)
 			defer file.Close()
-			defer os.Remove(filePath)
+
 			body := &bytes.Buffer{}
 			writer := multipart.NewWriter(body)
 			part, _ := writer.CreateFormFile("file", filepath.Base(file.Name()))
@@ -69,6 +69,7 @@ func main() {
 			if err != nil {
 				l.Println("Failed send file:", err)
 			}
+			os.Remove(filePath)
 			defer resp.Body.Close()
 			if resp.StatusCode == 200 {
 				result, _ := io.ReadAll(resp.Body)
