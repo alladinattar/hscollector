@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"time"
 )
 
@@ -40,8 +41,25 @@ func main() {
 			io.Copy(part, file)
 			writer.Close()
 
+			var location struct {
+				Lat int `json:"lat"`
+				Lon int `json:"lon"`
+			}
+			locationResp, err := http.Get("http://ip-api.com/json/")
+			if err != nil {
+				log.Println("Failed get location", err)
+				return
+			}
+			locationBody, err := io.ReadAll(locationResp.Body)
+			if err != nil {
+				log.Fatal("Failed read location body", err)
+			}
+			err = json.Unmarshal(locationBody, &location)
 			r, _ := http.NewRequest("POST", "http://"+catAddr+"/upload", body)
 			r.Header.Add("Content-Type", writer.FormDataContentType())
+			r.Header.Add("Latitude", strconv.Itoa(location.Lat))
+			r.Header.Add("Longitude", strconv.Itoa(location.Lon))
+
 			client := &http.Client{Timeout: 100 * time.Second}
 			resp, err := client.Do(r)
 			if err != nil {
@@ -49,22 +67,13 @@ func main() {
 			}
 			defer resp.Body.Close()
 			if resp.StatusCode == 200 {
-				var response struct {
-					Ssid     string `json:"ssid,omitempty"`
-					Password string `json:"password,omitempty"`
-					Mac      string `json:"mac,omitempty"`
-					Status   string `json:"status"`
-				}
 				asd, _ := ioutil.ReadAll(resp.Body)
-				err := json.Unmarshal(asd, &response)
+				body, err := json.MarshalIndent(asd, "", "  ")
 				if err != nil {
 					l.Println("Failed decode response:", err)
 				}
-				output, err := json.MarshalIndent(response, "", "  ")
-				if err != nil {
-					l.Println("Failed unmarshall", err)
-				}
-				fmt.Println(string(output))
+
+				fmt.Println(string(body))
 			}
 			log.Println(resp.StatusCode)
 
