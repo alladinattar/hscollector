@@ -67,12 +67,13 @@ func main() {
 			}
 			defer resp.Body.Close()
 			if resp.StatusCode == 200 {
-				body, err := json.MarshalIndent(resp.Body, "", "  ")
+				sdaf, _ := io.ReadAll(resp.Body)
+				fmt.Println(string(sdaf))
+				/*body, err := json.MarshalIndent(resp.Body, "", "  ")
 				if err != nil {
 					l.Println("Failed decode response:", err)
-				}
+				}*/
 
-				fmt.Println(string(body))
 			}
 			log.Println(resp.StatusCode)
 
