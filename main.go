@@ -34,7 +34,7 @@ func main() {
 			filePath := "/home/kali/shakes/" + f.Name()
 			file, _ := os.Open(filePath)
 			defer file.Close()
-
+			defer os.Remove(filePath)
 			body := &bytes.Buffer{}
 			writer := multipart.NewWriter(body)
 			part, _ := writer.CreateFormFile("file", filepath.Base(file.Name()))
@@ -67,9 +67,10 @@ func main() {
 			}
 			defer resp.Body.Close()
 			if resp.StatusCode == 200 {
-				sdaf, _ := io.ReadAll(resp.Body)
-				fmt.Println(string(sdaf))
+				result, _ := io.ReadAll(resp.Body)
+				fmt.Println(string(result))
 			}
+
 		}
 	} else {
 		l.Println("no required directory")
