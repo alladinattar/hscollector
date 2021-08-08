@@ -21,10 +21,11 @@ func main() {
 	l := log.New(os.Stdout, "", log.LstdFlags)
 
 	l.Println("check hashcat files ...")
-	files, _ := ioutil.ReadDir("/Users/dgolliher/Dropbox/INBOX")
 
-	l.Println("Found", strconv.Itoa(len(files)), "files")
 	if _, err := os.Stat("/home/kali/shakes"); !os.IsNotExist(err) {
+		files, _ := ioutil.ReadDir("/home/kali/shakes")
+		l.Println("Found", strconv.Itoa(len(files)), "files")
+
 		files, err := ioutil.ReadDir("/home/kali/shakes")
 		if err != nil {
 			log.Println("Failed read dir with shakes: ", err)
