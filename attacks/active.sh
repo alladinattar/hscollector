@@ -34,6 +34,7 @@ checkHandshakes() {
       fi
     else
       mkdir /home/kali/shakes
+      chmod 777 -R /home/kali/shakes
       mv /home/kali/cleanshakes.hccapx /home/kali/shakes/shake1
       touch /home/kali/shakes/.counter
       echo "1" >/home/kali/shakes/.counter
