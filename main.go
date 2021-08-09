@@ -70,12 +70,13 @@ func main() {
 				l.Println("Failed send file:", err)
 			}
 			defer resp.Body.Close()
+			err = os.Remove(filePath)
+			if err != nil {
+				log.Println("cannot remove file:", err)
+			}
 			if resp.StatusCode == 200 {
 				fmt.Println(filePath)
-				err := os.Remove(filePath)
-				if err != nil {
-					log.Println("cannot remove file:", err)
-				}
+
 				result, _ := io.ReadAll(resp.Body)
 				fmt.Println(string(result))
 			}
