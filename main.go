@@ -71,6 +71,7 @@ func main() {
 			}
 			defer resp.Body.Close()
 			if resp.StatusCode == 200 {
+				fmt.Println(filePath)
 				err := os.Remove(filePath)
 				if err != nil {
 					log.Println("cannot remove file:", err)
