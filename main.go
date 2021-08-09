@@ -43,7 +43,7 @@ func main() {
 			writer := multipart.NewWriter(body)
 			part, _ := writer.CreateFormFile("file", filepath.Base(file.Name()))
 			io.Copy(part, file)
-			writer.Close()
+			defer writer.Close()
 
 			var location struct {
 				Lat int `json:"lat"`
@@ -69,9 +69,10 @@ func main() {
 			if err != nil {
 				l.Println("Failed send file:", err)
 			}
-			os.Remove(filePath)
 			defer resp.Body.Close()
 			if resp.StatusCode == 200 {
+
+				os.Remove(filePath)
 				result, _ := io.ReadAll(resp.Body)
 				fmt.Println(string(result))
 			}
