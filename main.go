@@ -43,7 +43,7 @@ func main() {
 			writer := multipart.NewWriter(body)
 			part, _ := writer.CreateFormFile("file", filepath.Base(file.Name()))
 			io.Copy(part, file)
-			defer writer.Close()
+			writer.Close()
 
 			var location struct {
 				Lat int `json:"lat"`
