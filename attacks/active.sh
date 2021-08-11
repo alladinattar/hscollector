@@ -96,7 +96,7 @@ passive() {
 
   #airmon-ng check kill
   airmon-ng start wlan1
-
+  echo $1
   echo "Start airodump.."
   timeout 60 airodump-ng -w /home/kali/shakes wlan1 </dev/null >/dev/null
   checkHandshakes $1
