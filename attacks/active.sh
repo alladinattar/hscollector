@@ -105,14 +105,14 @@ passive() {
 }
 
 if [ $# -lt 1 ]; then
-  echo "Please use -a or -p flag"
+  echo "Please use a or p ar"
   exit 1
 fi
 checkUtils
 while getopts "pa" opt; do
   case $opt in
   a) active ;;
-  p) passive ;;
+  p) passive $1;;
   *) echo "Unknown option" ;;
   esac
 done
