@@ -103,15 +103,14 @@ passive() {
   passive
 }
 
-if [ $# -lt 1 ]; then
-  echo "Please use a or p ar"
-  exit 1
+
+if [[ $1 == "p" ]]
+then
+  passive $2
 fi
-checkUtils
-while getopts "pa" opt; do
-  case $opt in
-  a) active ;;
-  p) passive $1;;
-  *) echo "Unknown option" ;;
-  esac
-done
+if [[ $1 == "a"]]
+  then
+    active
+fi
+
+
