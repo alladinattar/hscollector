@@ -106,6 +106,7 @@ passive() {
 
 if [[ $1 == "p" ]]
 then
+  echo "Selected passive mode"
   passive $2
 fi
 if [[ $1 == "a"]]
