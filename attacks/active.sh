@@ -56,6 +56,7 @@ checkHandshakes() {
       sendHandshake /home/kali/shakes/shake1 $1
     fi
   fi
+
   echo ""
 }
 
@@ -93,7 +94,7 @@ active() {
 passive() {
   trap 'checkHandshakes;rm /home/kali/shakes-*' EXIT
 
-  airmon-ng check kill
+  #airmon-ng check kill
   airmon-ng start wlan1
 
   echo "Start airodump.."
