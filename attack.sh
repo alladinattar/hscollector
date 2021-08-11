@@ -106,18 +106,27 @@ passive() {
   passive $1
 }
 
-if [[ $2 == "" ]]; then
-  echo "Please enter hashcat server address second argument"
-  exit 1
-fi
+
 
 if [[ $1 == "p" ]]; then
   echo "Selected passive mode"
-  echo $2
-  passive $2
+  if [[ $2 == "" ]]; then
+    echo "Please enter hashcat server address second argument"
+    exit 1
+  else
+      echo "Hashcat server address: $2"
+      passive $2
+  fi
+
 elif [[ $1 == "a" ]]; then
   echo "Selected active mode"
-  active $2
+  if [[ $2 == "" ]]; then
+    echo "Please enter hashcat server address as second argument"
+    exit 1
+  else
+    echo "Hashcat server address: $2"
+    active $2
+  fi
 else
   echo "Use a - active or p - passive as first argument"
   exit 1
