@@ -97,7 +97,7 @@ active() {
 }
 
 passive() {
-  trap 'checkHandshakes;rm /home/kali/shakes-*' EXIT
+  trap 'checkHandshakes;rm /home/kali/shakes-*; exit 1' EXIT
   airmon-ng start wlan1 >/dev/null
   echo "Start airodump.."
   timeout 60 airodump-ng -w /home/kali/shakes wlan1 </dev/null >/dev/null
