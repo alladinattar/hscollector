@@ -34,7 +34,7 @@ sendHandshake() {
 checkHandshakes() {
   echo $1
   echo "Check handshakes..."
-  output=$(cap2hccapx /home/kali/shakes-01.cap /home/kali/cleanshakes.hccapx >/dev/null)
+  output=$(cap2hccapx /home/kali/shakes-01.cap /home/kali/cleanshakes.hccapx)
   #echo $output
   if [[ "$output" == *"Written 0"* ]] || [[ "$output" == *"Networks detected: 0"* ]]; then
     echo "No handshakes"
@@ -107,7 +107,7 @@ passive() {
 }
 
 checkHashcatServer() {
-  curl http://$1:9000/handshakes
+  curl http://$1:9000/handshakes > /dev/null
   if [[ $? == 0 ]]; then
     echo "Server status - working"
   else
