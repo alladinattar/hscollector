@@ -8,8 +8,7 @@ It's a bash script for collect handshakes in active and passive modes and sendin
 ## Installation
 All instructions are carried out in a chroot environment (e.g. kali linux)
 ### Utils
-1. airodump-ng and airmon-ng (these utils contains in aircrack-ng package)
-   sudo apt update
+1. airodump-ng and airmon-ng (these utils contains in aircrack-ng package)  sudo apt update
 
 sudo apt install aircrack-ng
 2. cap2hccapx
