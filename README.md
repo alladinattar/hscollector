@@ -4,7 +4,7 @@ It's a bash script for collect handshakes in active and passive modes and sendin
 ## Required hardware
 - Android Phone
 - External Wi-Fi adapter
-- Server based on Linux(recommended Ubuntu)
+- Server based on Linux(recommended Kali Linux)
 ## Required utilities
 ### Phone
 - airmon-ng
