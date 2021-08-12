@@ -22,7 +22,7 @@ All instructions are carried out in a chroot environment (e.g. kali linux)
    cd hashcat-utils/src
    make
    chmod +x cap2hccapx.bin
-   cp cap2hccapx.bin /bin
+   cp cap2hccapx.bin /bin/cap2hccapx
     ```
    
  
