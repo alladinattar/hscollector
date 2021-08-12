@@ -16,9 +16,13 @@ All instructions are carried out in a chroot environment (e.g. kali linux)
     ```
    
 2. cap2hccapx
+   * `Linux`
+    ```
    git clone https://github.com/hashcat/hashcat-utils.git
    cd hashcat-utils/src
    make
    chmod +x cap2hccapx.bin
    cp cap2hccapx.bin /bin
+    ```
+   
  
