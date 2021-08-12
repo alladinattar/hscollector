@@ -9,14 +9,11 @@ It's a bash script for collect handshakes in active and passive modes and sendin
 All instructions are carried out in a chroot environment (e.g. kali linux)
 ### Utils
 1. airodump-ng and airmon-ng (these utils contains in aircrack-ng package)
-   * `Linux`
     ```
    sudo apt update  
    sudo apt install aircrack-ng
     ```
-   
 2. cap2hccapx
-   * `Linux`
     ```
    git clone https://github.com/hashcat/hashcat-utils.git
    cd hashcat-utils/src
