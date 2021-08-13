@@ -31,5 +31,5 @@ All instructions are carried out in a chroot environment (e.g. kali linux)
 ```
    a - active mode  
    p - passive mode  
-   addr - hashcat server address
+   addr - hashcat server ip
  
