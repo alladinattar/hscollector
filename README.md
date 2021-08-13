@@ -27,7 +27,7 @@ All instructions are carried out in a chroot environment (e.g. kali linux)
     ```
 ## Usage
 ```
-    ./attack.sh [ p|a ] addr
+./attack.sh [ p|a ] addr
 ```
    a - active mode  
    p - passive mode  
