@@ -1,4 +1,4 @@
-# handshakecollector
+# hscollector
 ## About
 It's a bash script for collect handshakes in active and passive modes and sending its to hashcat server for cracking
 ## Required hardware
