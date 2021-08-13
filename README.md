@@ -26,5 +26,10 @@ All instructions are carried out in a chroot environment (e.g. kali linux)
    cp cap2hccapx.bin /bin/cap2hccapx
     ```
 ## Usage
-./attack [ p|a ] addr
+    ```
+    ./attack [ p|a ] addr
+    ```
+   a - active mode
+   p - passive mode
+   addr - hashcat server address
  
