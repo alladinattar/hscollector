@@ -1,17 +1,14 @@
-# handshakecracker
+# handshakecollector
 ## About
 It's a bash script for collect handshakes in active and passive modes and sending its to hashcat server for cracking
 ## Required hardware
 - Android Phone
 - External Wi-Fi adapter
-- Server based on Linux(recommended Kali Linux)
 ## Required utilities
 ### Phone
 - airmon-ng
 - airodump-ng
 - cap2hccapx
-### Server
-- hashcat
 ## Installation
 All instructions are carried out in a chroot environment (e.g. kali linux)
 ### Utils
@@ -28,5 +25,6 @@ All instructions are carried out in a chroot environment (e.g. kali linux)
    chmod +x cap2hccapx.bin
    cp cap2hccapx.bin /bin/cap2hccapx
     ```
-   
+## Usage
+./attack [ p|a ] addr
  
