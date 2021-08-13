@@ -4,8 +4,9 @@ It's a bash script for collect handshakes in active and passive modes and sendin
 ## Required hardware
 - Android Phone
 - External Wi-Fi adapter
-## Required utilities
-### Phone
+## Required software
+On android phone must be installed linux distribution as chroot environment. All utilities are installed in chroot environment  
+### Utils
 - airmon-ng
 - airodump-ng
 - cap2hccapx
