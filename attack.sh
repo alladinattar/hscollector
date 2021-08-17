@@ -35,6 +35,7 @@ checkHandshakes() {
   echo $1
   echo "Check handshakes..."
   output=$(cap2hccapx /home/kali/shakes-01.cap /home/kali/cleanshakes.hccapx)
+  echo $output
   #echo $output
   if [[ "$output" == *"Written 0"* ]] || [[ "$output" == *"Networks detected: 0"* ]]; then
     echo "No handshakes"
