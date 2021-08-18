@@ -71,7 +71,7 @@ active() {
   airmon-ng check kill
   airmon-ng start $2
   echo "Collect APs..."
-  timeout 20 airodump-ng -w /home/kali/shakesCollector $2 </dev/null >/dev/null
+  timeout 30 airodump-ng -w /home/kali/shakesCollector $2 </dev/null >/dev/null
   counter=0
   while IFS=, read -r bssid firsttimeseen lasttimeseen channel speed privacy cipher auth power beacons; do
     if [[ $counter -lt 2 ]] 
