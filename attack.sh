@@ -68,7 +68,6 @@ checkHandshakes() {
 
 active() {
   trap "rm /home/kali/sha* > /dev/null;rm /home/kali/cleanshakes.hccapx > /dev/null" EXIT
-  airmon-ng check kill
   airmon-ng start $2
   echo "Collect APs..."
   timeout 30 airodump-ng -w /home/kali/shakesCollector $2 </dev/null >/dev/null
