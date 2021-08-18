@@ -79,7 +79,7 @@ active() {
             continue
     fi
 
-    if [[ $power -lt -70 ]]
+    if [[ $power -lt -80 ]]
     then
             continue
     fi
