@@ -94,14 +94,11 @@ active() {
   echo "Collect APs..."
   timeout 40 airodump-ng -w /home/kali/hscollector/shakesCollector $interface </dev/null >/dev/null 
   cat /home/kali/hscollector/shakesCollector-01.csv
-  while IFS=, read -r bssid firsttimeseen lasttimeseen channel speed privacy cipher auth power beacons IV LANIP IDlength ESSID; do
-            
-
-
+  while IFS=, read -r bssid firsttimeseen lasttimeseen channel speed privacy cipher auth power beacons IV LANIP IDlength ESSID; do        
           if [[ $bssid == "BSSID" ]];then
                   continue
           fi
-          echo $power $ESSID $BSSID
+          echo $power"fads"
           if [[ $power -lt -75 ]]
           then
                   continue
