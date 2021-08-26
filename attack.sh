@@ -181,7 +181,7 @@ getparams(){
                         read;
                         serverAddr=${REPLY}
                         checkServer
-                        curl $serverAddr/handshakes
+                        curl -H "imei: $imei" $serverAddr/handshakes
                 fi
 
         fi
