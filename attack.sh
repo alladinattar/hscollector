@@ -96,7 +96,7 @@ active() {
   cat /home/kali/hscollector/shakesCollector-01.kismet.csv
   while IFS=; read -r id NetType ESSID BSSID Info Channel Cloaked Encryption Decrypted MaxRate MaxSeenRate Beacon LLC Data Crypt Weak Total Carrier Encoding FirstTime LastTime BestQuality BestSignal; do        
           echo $BestQuality $ESSID $BSSID $Channel
-  done << /home/kali/hscollector/shakesCollector-01.kismet.csv
+  done << (/home/kali/hscollector/shakesCollector-01.kismet.csv)
   rm /home/kali/hscollector/shakes* >/dev/null
 }
 
