@@ -129,7 +129,7 @@ getparams(){
         re='^[0-9]+$'
         if ! [[ ${REPLY} =~ $re ]] || [[ ${REPLY} >3 ]]; then
                 printf "Invalid input.\n"
-                exit 1
+                getparams
         fi
         command=${REPLY}
         if [[ $command == 1 ]] || [[ $command == 2 ]] ;then
