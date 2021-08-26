@@ -110,11 +110,7 @@ active() {
           pid=`echo $!`
           aireplay-ng -a $BSSID -0 10 $interface
           injectionExitCode=`echo $?`
-          if [[ $injectionExitCode -ne 0 ]]
-          then
-                  kill -9 $pid
-                  continue
-          fi
+          
          
           
           rm /home/kali/hscollector/shakes-* >/dev/null
