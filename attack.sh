@@ -103,7 +103,7 @@ active() {
           if [[ $bssid == "BSSID" ]];then
                   continue
           fi
-          if [[ $power -lt -65 ]]
+          if [[ $power -lt -75 ]]
           then
                   continue
           fi
