@@ -173,8 +173,8 @@ getparams(){
                 fi
 
         else if [[ ${REPLY} == 3 ]];then
-                if [[ $serverAddr != "" ]];then
-                        imei=$(chroot /proc/1/cwd/ service call iphonesubinfo 1 | cut -c 52-66 | tr -d '.[:space:]')
+                imei=$(chroot /proc/1/cwd/ service call iphonesubinfo 1 | cut -c 52-66 | tr -d '.[:space:]')
+                if [[ $serverAddr != "" ]];then                  
                         curl -H "imei: $imei" $serverAddr/handshakes
                 else
                         printf "Please set the hashcat server address(e.g. 192.168.1.24:9000)\n"
