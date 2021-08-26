@@ -97,7 +97,7 @@ active() {
                   continue
           fi
           echo $BestQuality $ESSID $BSSID $Channel
-          if [[ $BestQuality -lt -80 ]]
+          if [[ $BestQuality -lt -70 ]]
           then
                   echo $ESSID $BSSID $BestQuality
                   continue
