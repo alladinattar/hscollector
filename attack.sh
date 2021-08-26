@@ -109,7 +109,7 @@ active() {
           aireplay-ng -a $BSSID -0 5 $interface
           timeout 10s airodump-ng --bssid $BSSID --channel $Channel -w /home/kali/hscollector/shakes $interface &> /dev/null
           checkHandshakes
-          rm /home/kali/hscollector/shakes-* >/dev/null
+          rm /home/kali/hscollector/shakes-01.* >/dev/null
           
   done < /home/kali/hscollector/shakesCollector-01.kismet.csv
   rm /home/kali/hscollector/shakes* >/dev/null
