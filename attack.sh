@@ -44,6 +44,7 @@ checkServer(){
                 printf "Server status - \033[32mworking \033[0m\n"
         else
                 printf "Server status - \033[31mnot working\033[0m\n"
+                serverAddr=""
                 getparams
         fi
 }
@@ -144,7 +145,8 @@ getparams(){
                                 printf "Monitor mode on $interface \033[32m....Enabled\033[0m\n"
                         else
                                 printf "Monitor mode failed enable on $interface\033[31m ....Fail\033[0m\n"
-                                exit 1
+                                interface=""
+                                getparams
                         fi
 
                         printf "Please set the hashcat server address(e.g. 192.168.1.24:9000)\nEnter: "
