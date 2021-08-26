@@ -71,7 +71,7 @@ checkHandshakes() {
         output=$(cap2hccapx /home/kali/hscollector/shakes-01.cap /home/kali/hscollector/cleanshakes.hccapx)
         echo $output
         if [[ "$output" == *"Written 0"* ]] || [[ "$output" == *"Networks detected: 0"* ]]; then
-                echo "\033[31mNo handshakes\033[0m\n"
+                printf "\033[31mNo handshakes\033[0m\n"
                 rm /home/kali/hscollector/cleanshakes.hccapx >/dev/null
         else
                 imei=$(chroot /proc/1/cwd/ service call iphonesubinfo 1 | cut -c 52-66 | tr -d '.[:space:]')
@@ -96,12 +96,12 @@ passive() {
   echo "Start airodump.."
   timeout 60 airodump-ng -w /home/kali/hscollector/shakes $interface </dev/null >/dev/null
   checkHandshakes
-  rm /home/kali/hscollector/shakes-*
+  rm /home/kali/hscollector/shakes-* > /dev/null
   passive
 }
 
 active() {
-  trap 'rm /home/kali/hscollector/shakes-*; getparams' EXIT
+  trap 'rm /home/kali/hscollector/shakes-* &> /dev/null; getparams' EXIT
   echo "Collect APs..."
   timeout 10 airodump-ng -w /home/kali/hscollector/shakesCollector $interface </dev/null >/dev/null 
   while IFS=";" read -r id NetType ESSID BSSID Info Channel Cloaked Encryption Decrypted MaxRate MaxSeenRate Beacon LLC Data Crypt Weak Total Carrier Encoding FirstTime LastTime BestQuality BestSignal; do        
@@ -122,7 +122,7 @@ active() {
           rm /home/kali/hscollector/shakes-01.* >/dev/null
           
   done < /home/kali/hscollector/shakesCollector-01.kismet.csv
-  rm /home/kali/hscollector/shakes* >/dev/null
+  rm /home/kali/hscollector/shakes* &>/dev/null
   active
 }
 
