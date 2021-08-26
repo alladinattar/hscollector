@@ -44,7 +44,7 @@ checkServer(){
                 printf "Server status - \033[32mworking \033[0m\n"
         else
                 printf "Server status - \033[31mnot working\033[0m\n"
-                exit 1
+                getparams
         fi
 }
 
@@ -175,13 +175,16 @@ getparams(){
         else if [[ ${REPLY} == 3 ]];then
                 imei=$(chroot /proc/1/cwd/ service call iphonesubinfo 1 | cut -c 52-66 | tr -d '.[:space:]')
                 if [[ $serverAddr != "" ]];then                  
-                        curl -H "imei: $imei" $serverAddr/handshakes
+                        curl -H "imei: $imei" $serverAddr/progress
+                        curl -H "imei: $imei" $serverAddr/results
+
                 else
                         printf "Please set the hashcat server address(e.g. 192.168.1.24:9000)\nEnter: "
                         read;
                         serverAddr=${REPLY}
                         checkServer
-                        curl -H "imei: $imei" $serverAddr/handshakes
+                        curl -H "imei: $imei" $serverAddr/progress
+                        curl -H "imei: $imei" $serverAddr/results
                 fi
 
         fi
