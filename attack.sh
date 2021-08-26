@@ -116,6 +116,8 @@ active() {
          
           sleep 20
           kill -9 $pid &>/dev/null
+          checkHandshakes
+
           rm /home/kali/hscollector/shakes-* >/dev/null
   done < /home/kali/hscollector/shakesCollector-01.kismet.csv
   rm /home/kali/hscollector/shakes* >/dev/null
