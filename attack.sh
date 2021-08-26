@@ -90,6 +90,16 @@ checkHandshakes() {
 
 }
 
+passive() {
+  trap 'checkHandshakes;rm /home/kali/shakes-*; getparams' EXIT
+  airmon-ng start $interface >/dev/null
+  echo "Start airodump.."
+  timeout 60 airodump-ng -w /home/kali/hscollector/shakes $interface </dev/null >/dev/null
+  checkHandshakes
+  rm /home/kali/hscollector/shakes-*
+  passive
+}
+
 active() {
   echo "Collect APs..."
   timeout 20 airodump-ng -w /home/kali/hscollector/shakesCollector $interface </dev/null >/dev/null 
