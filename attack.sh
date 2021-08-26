@@ -5,7 +5,7 @@ serverAddr=""
 
 checkUtils(){
         printf "Check utilities\n"
-
+        
         #airmon-ng
         output=$(airmon-ng)
         if [[ "$output" == *"PHY"* ]]; then
@@ -147,7 +147,7 @@ getparams(){
                                 passive
                         fi
                 else
-                        printf "Please set the wireless interface(e.g. wlan0):\n"
+                        printf "Please set the wireless interface(e.g. wlan0):\nEnter: "
                         read;
                         interface=${REPLY}
                         output=$(airmon-ng start $interface)
@@ -158,7 +158,7 @@ getparams(){
                                 exit 1
                         fi
 
-                        printf "Please set the hashcat server address(e.g. 192.168.1.24:9000)\n"
+                        printf "Please set the hashcat server address(e.g. 192.168.1.24:9000)\nEnter: "
                         read;
                         serverAddr=${REPLY}
                         checkServer
@@ -177,7 +177,7 @@ getparams(){
                 if [[ $serverAddr != "" ]];then                  
                         curl -H "imei: $imei" $serverAddr/handshakes
                 else
-                        printf "Please set the hashcat server address(e.g. 192.168.1.24:9000)\n"
+                        printf "Please set the hashcat server address(e.g. 192.168.1.24:9000)\nEnter: "
                         read;
                         serverAddr=${REPLY}
                         checkServer
