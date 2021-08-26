@@ -173,10 +173,15 @@ getparams(){
                 fi
 
         else if [[ ${REPLY} == 3 ]];then
-                printf "Please set the hashcat server address(e.g. 192.168.1.24:9000)\n"
-                read;
-                serverAddr=${REPLY}
-                checkServer
+                if [[ $serverAddr != "" ]];then
+                        curl $serverAddr/handshakes
+                else
+                        printf "Please set the hashcat server address(e.g. 192.168.1.24:9000)\n"
+                        read;
+                        serverAddr=${REPLY}
+                        checkServer
+                        curl $serverAddr/handshakes
+                fi
 
         fi
         fi
