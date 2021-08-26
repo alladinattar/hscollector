@@ -93,8 +93,7 @@ checkHandshakes() {
 active() {
   echo "Collect APs..."
   timeout 30 airodump-ng -w /home/kali/hscollector/shakesCollector $interface </dev/null >/dev/null 
-  ls /home/kali/hscollector
-  while IFS=, read -r bssid firsttimeseen lasttimeseen channel speed privacy cipher auth power beacons; do
+  while IFS=, read -r bssid firsttimeseen lasttimeseen channel speed privacy cipher auth power beacons IV LANIP ID-length ESSID; do
 
           if [[ $power == "" ]]
           then 
@@ -109,7 +108,7 @@ active() {
                   continue
           fi
           
-          printf "Attack: $bssid \nChannel: $channel \nPower: $power\n"
+          printf "Attack: $bssid \nChannel: $channel \nPower: $power\nSSID: $ESSID\n"
           iwconfig $interface channel $channel
           airodump-ng --bssid $bssid --channel $channel -w /home/kali/hscollector/shakes $interface &>/dev/null &
           pid=`echo $!`
