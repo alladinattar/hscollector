@@ -138,7 +138,7 @@ getparams(){
         fi
         command=${REPLY}
         if [[ $command == 1 ]] || [[ $command == 2 ]] ;then
-                if [[ $interface != "" ]];then
+                if [[ $interface != "" ]] && [[ $serverAddr != "" ]];then
                         if [[ $command == 1 ]];then
                                 active
                                 getparams
