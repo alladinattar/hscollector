@@ -145,6 +145,7 @@ getparams(){
                         fi
                         if [[ $command == 2 ]];then
                                 passive
+                                getparams
                         fi
                 else
                         printf "Please set the wireless interface(e.g. wlan0):\nEnter: "
@@ -169,6 +170,7 @@ getparams(){
                         fi
                         if [[ $command == 2 ]];then
                                 passive
+                                getparams
                         fi
                 fi
 
@@ -186,6 +188,7 @@ getparams(){
                         curl -H "imei: $imei" $serverAddr/progress
                         curl -H "imei: $imei" $serverAddr/results
                 fi
+                getparams
 
         fi
         fi
