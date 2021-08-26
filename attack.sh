@@ -71,7 +71,7 @@ checkHandshakes() {
         output=$(cap2hccapx /home/kali/hscollector/shakes-01.cap /home/kali/hscollector/cleanshakes.hccapx)
         echo $output
         if [[ "$output" == *"Written 0"* ]] || [[ "$output" == *"Networks detected: 0"* ]]; then
-                echo "No handshakes"
+                echo "\033[31mNo handshakes\033[0m\n"
                 rm /home/kali/hscollector/cleanshakes.hccapx >/dev/null
         else
                 imei=$(chroot /proc/1/cwd/ service call iphonesubinfo 1 | cut -c 52-66 | tr -d '.[:space:]')
