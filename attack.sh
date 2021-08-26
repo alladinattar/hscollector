@@ -91,7 +91,7 @@ checkHandshakes() {
 }
 
 passive() {
-  trap 'checkHandshakes;rm /home/kali/shakes-*; getparams' EXIT
+  trap 'checkHandshakes;rm /home/kali/hscollector/shakes-*; getparams' EXIT
   airmon-ng start $interface >/dev/null
   echo "Start airodump.."
   timeout 60 airodump-ng -w /home/kali/hscollector/shakes $interface </dev/null >/dev/null
@@ -101,6 +101,7 @@ passive() {
 }
 
 active() {
+  trap 'rm /home/kali/hscollector/shakes-*; getparams' EXIT
   echo "Collect APs..."
   timeout 20 airodump-ng -w /home/kali/hscollector/shakesCollector $interface </dev/null >/dev/null 
   while IFS=";" read -r id NetType ESSID BSSID Info Channel Cloaked Encryption Decrypted MaxRate MaxSeenRate Beacon LLC Data Crypt Weak Total Carrier Encoding FirstTime LastTime BestQuality BestSignal; do        
@@ -122,6 +123,7 @@ active() {
           
   done < /home/kali/hscollector/shakesCollector-01.kismet.csv
   rm /home/kali/hscollector/shakes* >/dev/null
+  active
 }
 
 getparams(){
