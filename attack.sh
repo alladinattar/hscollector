@@ -96,10 +96,7 @@ active() {
   cat /home/kali/hscollector/shakesCollector-01.csv
   while IFS=, read -r bssid firsttimeseen lasttimeseen channel speed privacy cipher auth power beacons IV LANIP IDlength ESSID; do
             
-          if [[ $power == "" ]]
-          then 
-                  break
-          fi
+
 
           if [[ $bssid == "BSSID" ]];then
                   continue
