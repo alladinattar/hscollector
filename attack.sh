@@ -202,10 +202,9 @@ cleanup(){
         kill -9 $airodumpPID
         rm /home/kali/hscollector/shakes* &> /dev/null
         rm /home/kali/hscollector/cleanshakes.hccapx &> /dev/null
-        exit 1
 }
 
-trap cleanup SIGINT SIGTERM ERR EXIT
+trap 'cleanup;exit 1' SIGINT SIGTERM ERR EXIT
 
 main(){
         checkUtils
