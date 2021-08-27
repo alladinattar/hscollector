@@ -110,7 +110,7 @@ active() {
           if [[ $BSSID == "BSSID" ]];then
                   continue
           fi
-          if [[ $BestQuality -lt -60 ]]
+          if [[ $BestQuality -lt -70 ]]
           then
                   continue
           fi
