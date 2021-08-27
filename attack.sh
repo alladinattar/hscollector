@@ -168,7 +168,7 @@ getparams(){
         printf "1) Start active attack\n2) Start passive attack\n3) Get crack results\n4) Attack a specific poinе\nEnter: "
         read;
         re='^[0-9]+$'
-        if ! [[ ${REPLY} =~ $re ]] || [[ ${REPLY} >3 ]]; then
+        if ! [[ ${REPLY} =~ $re ]] || [[ ${REPLY} >4 ]]; then
                 printf "Invalid input.\n"
                 getparams
         fi
