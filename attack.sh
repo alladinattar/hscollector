@@ -92,7 +92,7 @@ checkHandshakes() {
 
 airodumpPID=""
 passive() {
-  trap 'checkHandshakes;rm /home/kali/hscollector/shakes-*; getparams' EXIT
+  trap 'cleanup; getparams' EXIT
   airmon-ng start $interface >/dev/null
   echo "Start airodump.."
   timeout 60 airodump-ng -w /home/kali/hscollector/shakes $interface </dev/null >/dev/null
