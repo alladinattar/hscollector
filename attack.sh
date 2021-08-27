@@ -173,7 +173,7 @@ getparams(){
                 getparams
         fi
         command=${REPLY}
-        if [[ $command == 1 ]] || [[ $command == 2 ]] ;then
+        if [[ $command == 1 ]] || [[ $command == 2 ]] || [[ $command == 4 ]];then
                 if [[ $interface != "" ]] && [[ $serverAddr != "" ]];then
                         if [[ $command == 1 ]];then
                                 active
@@ -181,6 +181,11 @@ getparams(){
                         fi
                         if [[ $command == 2 ]];then
                                 passive
+                                getparams
+                        fi
+                        if [[ $command == 4 ]]
+                        then
+                                attackSpecific
                                 getparams
                         fi
                 else
