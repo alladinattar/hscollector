@@ -154,10 +154,12 @@ attackSpecific(){
                           kill -9 $airodumpPID
                           checkHandshakes
                           rm /home/kali/hscollector/shakes-01.* >/dev/null
+                          break
                   else
-                        printf "\033[31mNo this AP\033[0m\n"
                         continue
                   fi                 
+                  printf "\033[31mNo this AP\033[0m\n"
+
             done < /home/kali/hscollector/shakesCollector-01.kismet.csv
             rm /home/kali/hscollector/shakes* &>/dev/null
 
@@ -165,7 +167,7 @@ attackSpecific(){
 
 getparams(){
         printf "Please select an action:\n"
-        printf "1) Start active attack\n2) Start passive attack\n3) Get crack results\n4) Attack a specific poinе\nEnter: "
+        printf "1) Start active attack\n2) Start passive attack\n3) Get crack results\n4) Attack a specific point\nEnter: "
         read;
         re='^[0-9]+$'
         if ! [[ ${REPLY} =~ $re ]] || [[ ${REPLY} >4 ]]; then
