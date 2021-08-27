@@ -214,6 +214,11 @@ getparams(){
                                 passive
                                 getparams
                         fi
+                        if [[ $command == 4 ]]
+                        then
+                                attackSpecific
+                                getparams
+                        fi
                 fi
 
         else if [[ ${REPLY} == 3 ]];then
