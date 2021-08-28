@@ -282,6 +282,7 @@ main(){
                 if [[ $1 == "r" ]];then
                         getresults
                 fi
+                exit 1
         fi
         getparams
         cleanup
