@@ -284,6 +284,7 @@ main(){
                         getresults
                 fi
                 exit 1
+
         fi
         getparams
         cleanup
