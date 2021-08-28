@@ -271,17 +271,23 @@ main(){
                 serverAddr=$3
                 if [[ $1 == "a" ]];then
                         active
+                        exit 0
+
                 fi
                 if [[ $1 == "p" ]];then
                         passive
+                        exit 0
+
                 fi
                 if [[ $1 == "s" ]];then
                         attackSpecific
+                        exit 0       
                 fi
                 if [[ $1 == "r" ]];then
                         getresults
+                        exit 0
+
                 fi
-                exit 0
 
         fi
         getparams
