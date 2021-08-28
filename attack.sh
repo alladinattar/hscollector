@@ -68,7 +68,7 @@ sendHandshake() {
 checkHandshakes() {
         printf "\n"
         echo "Check handshakes..."
-        wpaclean cleancap.cap /home/kali/hscollector/shakes-01.cap
+        wpaclean /home/kali/hscollector/cleancap.cap /home/kali/hscollector/shakes-01.cap
         output=$(cap2hccapx /home/kali/hscollector/cleancap.cap /home/kali/hscollector/cleanshakes.hccapx)
         rm cleancap.cap
         echo $output
@@ -247,6 +247,8 @@ getparams(){
 
 cleanup(){
         kill -9 $airodumpPID
+        rm cleancap.cap
+
         rm /home/kali/hscollector/shakes* &> /dev/null
         rm /home/kali/hscollector/cleanshakes.hccapx &> /dev/null
 }
