@@ -50,7 +50,7 @@ checkServer(){
 }
 
 sendHandshake() {
-        trap 'cleanup;getparams' EXIT
+        trap 'cleanup' EXIT
         long=$(chroot /proc/1/cwd/ dumpsys location | grep "LongitudeDegrees: " | awk -F' |,' '{print $16}')
         echo "Long: "$long
         lat=$(chroot /proc/1/cwd/ dumpsys location | grep "LatitudeDegrees: " | awk -F' |,' '{print $13}')
@@ -67,7 +67,7 @@ sendHandshake() {
 }
 
 checkHandshakes() {
-        trap 'cleanup;getparams' EXIT
+        trap 'cleanup' EXIT
         printf "\n"
         echo "Check handshakes..."
         cleanout=$(wpaclean /home/kali/hscollector/cleancap.cap /home/kali/hscollector/shakes-01.cap)
@@ -92,10 +92,7 @@ checkHandshakes() {
                 printf "\033[31mNo handshakes\033[0m\n"
                 rm /home/kali/hscollector/cleanshakes.hccapx >/dev/null
         fi
-        rm cleancap.cap
-
-        
-
+        rm cleancap.cap > /dev/null
 }
 
 airodumpPID=""
@@ -272,6 +269,10 @@ main(){
 }
 
 
+if [[ "$(whoami)" != root ]]; then
+  echo "Only user root can run this script."
+  exit 1
+fi
 
 if [[ $1 != "" ]] && [[ $2 != "" ]] && [[ $3 != "" ]];then
                 interface=$2
