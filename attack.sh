@@ -70,6 +70,7 @@ checkHandshakes() {
         echo "Check handshakes..."
         wpaclean cleancap.cap /home/kali/hscollector/shakes-01.cap
         output=$(cap2hccapx /home/kali/hscollector/cleancap.cap /home/kali/hscollector/cleanshakes.hccapx)
+        rm cleancap.cap
         echo $output
         if [[ "$output" == *"Written 0"* ]] || [[ "$output" == *"Networks detected: 0"* ]]; then
                 printf "\033[31mNo handshakes\033[0m\n"
