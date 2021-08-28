@@ -266,32 +266,31 @@ trap 'cleanup;exit 1' SIGINT SIGTERM ERR EXIT
 
 main(){
         checkUtils
-        if [[ $1 != "" ]] && [[ $2 != "" ]] && [[ $3 != "" ]];then
+        
+        getparams
+        cleanup
+}
+
+
+
+if [[ $1 != "" ]] && [[ $2 != "" ]] && [[ $3 != "" ]];then
                 interface=$2
                 serverAddr=$3
                 if [[ $1 == "a" ]];then
                         active
-                        exit 0
-
                 fi
                 if [[ $1 == "p" ]];then
                         passive
-                        exit 0
 
                 fi
                 if [[ $1 == "s" ]];then
                         attackSpecific
-                        exit 0       
                 fi
                 if [[ $1 == "r" ]];then
                         getresults
-                        exit 0
-
                 fi
+                exit 0
 
-        fi
-        getparams
-        cleanup
-}
-main $1 $2 $3
+fi
+main 
 
