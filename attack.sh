@@ -172,6 +172,11 @@ attackSpecific(){
 
 }
 
+getresults(){
+        curl -H "imei: $imei" $serverAddr/progress
+        curl -H "imei: $imei" $serverAddr/results
+}
+
 getparams(){
         printf "Please select an action:\n"
         printf "1) Start active attack\n2) Start passive attack\n3) Get crack results\n4) Attack a specific point\nEnter: "
@@ -233,16 +238,14 @@ getparams(){
         else if [[ ${REPLY} == 3 ]];then
                 imei=$(chroot /proc/1/cwd/ service call iphonesubinfo 1 | cut -c 52-66 | tr -d '.[:space:]')
                 if [[ $serverAddr != "" ]];then                  
-                        curl -H "imei: $imei" $serverAddr/progress
-                        curl -H "imei: $imei" $serverAddr/results
+                        getresults
 
                 else
                         printf "Please set the hashcat server address(e.g. 192.168.1.24:9000)\nEnter: "
                         read;
                         serverAddr=${REPLY}
                         checkServer
-                        curl -H "imei: $imei" $serverAddr/progress
-                        curl -H "imei: $imei" $serverAddr/results
+                        getresults
                 fi
                 getparams
 
@@ -263,6 +266,22 @@ trap 'cleanup;exit 1' SIGINT SIGTERM ERR EXIT
 
 main(){
         checkUtils
+        if [[ $1 != "" ]] && [[ $2 != "" ]] && [[ $3 != "" ]];then
+                interface=$2
+                serverAddr=$3
+                if [[ $1 == "a" ]];then
+                        active
+                fi
+                if [[ $1 == "p" ]];then
+                        passive
+                fi
+                if [[ $1 == "s" ]];then
+                        attackSpecific
+                fi
+                if [[ $1 == "r" ]];then
+                        getresults
+                fi
+        fi
         getparams
         cleanup
 }
