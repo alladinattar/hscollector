@@ -113,7 +113,6 @@ active() {
   trap 'cleanup;' EXIT
   echo "Collect APs..."
   timeout 10 airodump-ng -w /home/kali/hscollector/shakesCollector $interface </dev/null >/dev/null 
-  cat /home/kali/hscollector/shakesCollector-01.kismet.csv
   while IFS=";" read -r id NetType ESSID BSSID Info Channel Cloaked Encryption Decrypted MaxRate MaxSeenRate Beacon LLC Data Crypt Weak Total Carrier Encoding FirstTime LastTime BestQuality BestSignal; do        
           if [[ $BSSID == "BSSID" ]];then
                   continue
@@ -267,7 +266,6 @@ trap 'cleanup;exit 1' SIGINT SIGTERM ERR EXIT
 
 main(){
         checkUtils
-        echo $1 $2 $3
         if [[ $1 != "" ]] && [[ $2 != "" ]] && [[ $3 != "" ]];then
                 interface=$2
                 serverAddr=$3
