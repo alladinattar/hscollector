@@ -50,6 +50,7 @@ checkServer(){
 }
 
 sendHandshake() {
+        trap 'cleanup;getparams' EXIT
         long=$(chroot /proc/1/cwd/ dumpsys location | grep "LongitudeDegrees: " | awk -F' |,' '{print $16}')
         echo "Long: "$long
         lat=$(chroot /proc/1/cwd/ dumpsys location | grep "LatitudeDegrees: " | awk -F' |,' '{print $13}')
@@ -66,6 +67,7 @@ sendHandshake() {
 }
 
 checkHandshakes() {
+        trap 'cleanup;getparams' EXIT
         printf "\n"
         echo "Check handshakes..."
         cleanout=$(wpaclean /home/kali/hscollector/cleancap.cap /home/kali/hscollector/shakes-01.cap)
@@ -98,7 +100,7 @@ checkHandshakes() {
 
 airodumpPID=""
 passive() {
-  trap 'cleanup;' EXIT
+  trap 'cleanup;getparams' EXIT
   airmon-ng start $interface >/dev/null
   echo "Start airodump.."
   timeout 60 airodump-ng -w /home/kali/hscollector/shakes $interface </dev/null >/dev/null
@@ -136,7 +138,7 @@ active() {
 }
 
 attackSpecific(){
-           trap 'cleanup; getparams' EXIT
+           trap 'cleanup;' EXIT
            printf "Enter SSID: \nEnter: "
            read;
            SSID=${REPLY}
@@ -188,7 +190,7 @@ getparams(){
                         fi
                         if [[ $command == 2 ]];then
                                 passive
-                                getparams
+                                
                         fi
                         if [[ $command == 4 ]]
                         then
@@ -219,7 +221,7 @@ getparams(){
                         fi
                         if [[ $command == 2 ]];then
                                 passive
-                                getparams
+                                
                         fi
                         if [[ $command == 4 ]]
                         then
