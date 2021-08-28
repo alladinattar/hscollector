@@ -170,6 +170,8 @@ attackSpecific(){
 }
 
 getresults(){
+        imei=$(chroot /proc/1/cwd/ service call iphonesubinfo 1 | cut -c 52-66 | tr -d '.[:space:]')
+
         curl -H "imei: $imei" $serverAddr/progress
         curl -H "imei: $imei" $serverAddr/results
 }
@@ -233,7 +235,6 @@ getparams(){
                 fi
 
         else if [[ ${REPLY} == 3 ]];then
-                imei=$(chroot /proc/1/cwd/ service call iphonesubinfo 1 | cut -c 52-66 | tr -d '.[:space:]')
                 if [[ $serverAddr != "" ]];then                  
                         getresults
 
