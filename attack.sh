@@ -71,7 +71,6 @@ checkHandshakes() {
         cleanout=$(wpaclean /home/kali/hscollector/cleancap.cap /home/kali/hscollector/shakes-01.cap)
         if [[ "$cleanout" == *"Net"* ]]; then
                 output=$(cap2hccapx /home/kali/hscollector/cleancap.cap /home/kali/hscollector/cleanshakes.hccapx)
-                rm cleancap.cap
                 echo $output
                 
                 imei=$(chroot /proc/1/cwd/ service call iphonesubinfo 1 | cut -c 52-66 | tr -d '.[:space:]')
@@ -86,7 +85,12 @@ checkHandshakes() {
                         mv /home/kali/hscollector/cleanshakes.hccapx /home/kali/hscollector/shakes/shake-$time-$imei
                 fi
                 sendHandshake $filename
+        else 
+                printf "\033[31mNo handshakes\033[0m\n"
+                rm /home/kali/hscollector/cleanshakes.hccapx >/dev/null
         fi
+        rm cleancap.cap
+
         
 
 }
