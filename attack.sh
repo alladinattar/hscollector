@@ -266,6 +266,7 @@ trap 'cleanup;exit 1' SIGINT SIGTERM ERR EXIT
 
 main(){
         checkUtils
+        echo $1 $2 $3
         if [[ $1 != "" ]] && [[ $2 != "" ]] && [[ $3 != "" ]];then
                 interface=$2
                 serverAddr=$3
