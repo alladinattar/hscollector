@@ -283,7 +283,7 @@ main(){
                 if [[ $1 == "r" ]];then
                         getresults
                 fi
-                exit 1
+                exit 0
 
         fi
         getparams
