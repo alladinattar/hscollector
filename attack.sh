@@ -115,6 +115,10 @@ active() {
           if [[ $BSSID == "BSSID" ]];then
                   continue
           fi
+          if [[ $id == "" ]]
+          then
+                  continue
+          fi
           if [[ $BestQuality -lt -70 ]]
           then
                   continue
@@ -130,7 +134,7 @@ active() {
           kill -9 $airodumpPID
           checkHandshakes
           rm /home/kali/hscollector/shakes-01.* >/dev/null
-  done < /home/kali/hscollector/shakesCollector-01.kismet.csv 
+  done < /home/kali/hscollector/shakesCollector-01.kismet.csv | tac
   rm /home/kali/hscollector/shakes* &>/dev/null
   
 }
