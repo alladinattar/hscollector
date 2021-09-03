@@ -110,6 +110,7 @@ passive() {
 active() {
   trap 'cleanup;' EXIT
   echo "Collect APs..."
+  cat /home/kali/hscollector/shakesCollector-01.kismet.csv
   timeout 10 airodump-ng -w /home/kali/hscollector/shakesCollector $interface </dev/null >/dev/null 
   while IFS=";" read -r id NetType ESSID BSSID Info Channel Cloaked Encryption Decrypted MaxRate MaxSeenRate Beacon LLC Data Crypt Weak Total Carrier Encoding FirstTime LastTime BestQuality BestSignal; do        
           if [[ $BSSID == "BSSID" ]];then
