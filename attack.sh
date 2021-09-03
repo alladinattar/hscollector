@@ -108,6 +108,7 @@ passive() {
 
 active() {
   trap 'cleanup;' EXIT
+  airmon-ng start $interface >/dev/null
   echo "Collect APs..."
   timeout 10 airodump-ng -w /home/kali/hscollector/shakesCollector $interface </dev/null >/dev/null 
   while IFS=";" read -r id NetType ESSID BSSID Info Channel Cloaked Encryption Decrypted MaxRate MaxSeenRate Beacon LLC Data Crypt Weak Total Carrier Encoding FirstTime LastTime BestQuality BestSignal; do        
@@ -136,6 +137,7 @@ active() {
 
 attackSpecific(){
            trap 'cleanup;' EXIT
+           airmon-ng start $interface >/dev/null
            printf "Enter SSID: \nEnter: "
            read;
            SSID=${REPLY}
@@ -166,12 +168,10 @@ attackSpecific(){
 
             done < /home/kali/hscollector/shakesCollector-01.kismet.csv
             rm /home/kali/hscollector/shakes* &>/dev/null
-
 }
 
 getresults(){
         imei=$(chroot /proc/1/cwd/ service call iphonesubinfo 1 | cut -c 52-66 | tr -d '.[:space:]')
-
         curl -H "imei: $imei" $serverAddr/progress
         curl -H "imei: $imei" $serverAddr/results
 }
@@ -278,6 +278,9 @@ fi
 if [[ $1 != "" ]] && [[ $2 != "" ]] && [[ $3 != "" ]];then
                 interface=$2
                 serverAddr=$3
+                checkUtils
+                airmon-ng start $interface >/dev/null
+
                 if [[ $1 == "a" ]];then
                         active
                 fi
