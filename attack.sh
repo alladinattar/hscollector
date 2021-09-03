@@ -134,7 +134,7 @@ active() {
           kill -9 $airodumpPID
           checkHandshakes
           rm /home/kali/hscollector/shakes-01.* >/dev/null
-  done < /home/kali/hscollector/shakesCollector-01.kismet.csv | tac
+  done < <(tac /home/kali/hscollector/shakesCollector-01.kismet.csv)
   rm /home/kali/hscollector/shakes* &>/dev/null
   
 }
