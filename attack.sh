@@ -51,6 +51,7 @@ checkServer(){
 
 sendHandshake() {
         trap 'cleanup' EXIT
+    
         long=$(chroot /proc/1/cwd/ dumpsys location | grep "LongitudeDegrees: " | awk -F' |,' '{print $16}')
         echo "Long: "$long
         lat=$(chroot /proc/1/cwd/ dumpsys location | grep "LatitudeDegrees: " | awk -F' |,' '{print $13}')
@@ -262,22 +263,25 @@ cleanup(){
         rm /home/kali/hscollector/cleanshakes.hccapx &> /dev/null
 }
 
-trap 'cleanup;exit 1' SIGINT SIGTERM ERR EXIT
-
-main(){
-        checkUtils
-        
-        getparams
-        cleanup
-}
-
+trap 'cleanup;exit 0' SIGINT SIGTERM ERR EXIT
 
 if [[ "$(whoami)" != root ]]; then
   echo "Only user root can run this script."
   exit 1
 fi
 
+main(){
+        checkUtils
+        chroot /proc/1/cwd/ settings put secure location_mode 3
+        getparams
+        cleanup
+}
+
+
+
+
 if [[ $1 != "" ]] && [[ $2 != "" ]] && [[ $3 != "" ]];then
+                chroot /proc/1/cwd/ settings put secure location_mode 3
                 interface=$2
                 serverAddr=$3
                 checkUtils
