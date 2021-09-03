@@ -282,13 +282,16 @@ if [[ $1 != "" ]] && [[ $2 != "" ]] && [[ $3 != "" ]];then
                 airmon-ng start $interface >/dev/null
 
                 if [[ $1 == "a" ]];then
+                        checkServer
                         active
                 fi
                 if [[ $1 == "p" ]];then
+                        checkServer
                         passive
 
                 fi
                 if [[ $1 == "s" ]];then
+                        checkServer
                         attackSpecific
                 fi
                 if [[ $1 == "r" ]];then
