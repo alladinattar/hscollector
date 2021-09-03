@@ -108,7 +108,6 @@ passive() {
 
 active() {
   trap 'cleanup;' EXIT
-  checkServer
   echo "Collect APs..."
   timeout 10 airodump-ng -w /home/kali/hscollector/shakesCollector $interface </dev/null >/dev/null 
   cat /home/kali/hscollector/shakesCollector-01.kismet.csv
@@ -131,7 +130,7 @@ active() {
           kill -9 $airodumpPID
           checkHandshakes
           rm /home/kali/hscollector/shakes-01.* >/dev/null
-  done < /home/kali/hscollector/shakesCollector-01.kismet.csv | tac
+  done < /home/kali/hscollector/shakesCollector-01.kismet.csv 
   rm /home/kali/hscollector/shakes* &>/dev/null
   
 }
