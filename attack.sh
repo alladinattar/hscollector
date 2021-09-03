@@ -45,7 +45,7 @@ checkServer(){
         else
                 printf "Server status - \033[31mnot working\033[0m\n"
                 serverAddr=""
-                getparams
+                exit 1
         fi
 }
 
@@ -221,7 +221,6 @@ getparams(){
                         read;
                         serverAddr=${REPLY}
                         checkServer
-
                         if [[ $command == 1 ]];then
                                 active
                                 getparams
