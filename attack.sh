@@ -119,7 +119,7 @@ active() {
           then
                   continue
           fi
-          if [[ $BestQuality -lt -70 ]]
+          if [[ $BestQuality -lt -70 ]] || [[ $BestQuality -eq -1 ]]
           then
                   continue
           fi
