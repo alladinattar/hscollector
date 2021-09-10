@@ -73,7 +73,7 @@ checkHandshakes() {
         echo "Check handshakes..."
         cleanout=$(wpaclean /home/kali/hscollector/cleancap.cap /home/kali/hscollector/shakes-01.cap)
         echo $cleanout
-        if [[ "$cleanout" == *"Net"* ]]; then
+        if [[ "$cleanout" == *"Net "* ]]; then
                 output=$(cap2hccapx /home/kali/hscollector/cleancap.cap /home/kali/hscollector/cleanshakes.hccapx)
                 echo $output
                 
