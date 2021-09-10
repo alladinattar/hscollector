@@ -76,19 +76,23 @@ checkHandshakes() {
         if [[ "$cleanout" == *"Net "* ]]; then
                 output=$(cap2hccapx /home/kali/hscollector/cleancap.cap /home/kali/hscollector/cleanshakes.hccapx)
                 echo $output
-                
-                imei=$(chroot /proc/1/cwd/ service call iphonesubinfo 1 | cut -c 52-66 | tr -d '.[:space:]')
-                printf "\033[32mHandshakes detected!!!\033[0m\n"
-                time=$(date +%s)
-                filename="shake-$time-$imei"
-                if [[ -d /home/kali/hscollector/shakes ]]; then
-                        mv /home/kali/hscollector/cleanshakes.hccapx /home/kali/hscollector/shakes/shake-$time-$imei
-                else
-                        mkdir /home/kali/hscollector/shakes
-                        chmod 777 -R /home/kali/hscollector/shakes
-                        mv /home/kali/hscollector/cleanshakes.hccapx /home/kali/hscollector/shakes/shake-$time-$imei
-                fi
-                sendHandshake $filename
+                if [[ "$output" != *"Written 0"* ]]; then
+                        imei=$(chroot /proc/1/cwd/ service call iphonesubinfo 1 | cut -c 52-66 | tr -d '.[:space:]')
+                        printf "\033[32mHandshakes detected!!!\033[0m\n"
+                        time=$(date +%s)
+                        filename="shake-$time-$imei"
+                        if [[ -d /home/kali/hscollector/shakes ]]; then
+                                mv /home/kali/hscollector/cleanshakes.hccapx /home/kali/hscollector/shakes/shake-$time-$imei
+                        else
+                                mkdir /home/kali/hscollector/shakes
+                                chmod 777 -R /home/kali/hscollector/shakes
+                                mv /home/kali/hscollector/cleanshakes.hccapx /home/kali/hscollector/shakes/shake-$time-$imei
+                        fi
+                        sendHandshake $filename
+                 else
+                        printf "\033[31mNo handshakes\033[0m\n"
+                        rm /home/kali/hscollector/cleanshakes.hccapx >/dev/null
+                 fi
         else 
                 printf "\033[31mNo handshakes\033[0m\n"
                 rm /home/kali/hscollector/cleanshakes.hccapx >/dev/null
