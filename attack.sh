@@ -49,6 +49,7 @@ checkHandshakes() {
                                 chmod 777 -R ./hscollector/shakes
                                 mv ./hscollector/cleanshakes.hccapx ./hscollector/shakes/shake-$time
                         fi
+                        cleanup
                         exit 0
                  else
                         printf "\033[31mNo handshakes\033[0m\n"
@@ -58,7 +59,7 @@ checkHandshakes() {
                 printf "\033[31mNo handshakes\033[0m\n"
                 rm ./hscollector/cleanshakes.hccapx >/dev/null
         fi
-        #rm cleancap.cap > /dev/null
+        rm cleancap.cap > /dev/null
 }
 
 airodumpPID=""
@@ -104,7 +105,7 @@ active() {
 }
 
 attackSpecific(){
-           #trap 'cleanup;' EXIT
+           trap 'cleanup;' EXIT
            airmon-ng start $interface >/dev/null
            BSSID_SEARCH=$1
            timeout 20 airodump-ng -w ./hscollector/shakesCollector $interface </dev/null >/dev/null 
@@ -132,8 +133,9 @@ attackSpecific(){
                   printf "\033[31mNo this AP\033[0m\n"
 
             done < ./hscollector/shakesCollector-01.kismet.csv
-            rm ./hscollector/shakesCollector* &>/dev/null
-            rm ./hscollector/shakes* &>/dev/null
+            cleanup
+            #rm ./hscollector/shakesCollector* &>/dev/null
+            #rm ./hscollector/shakes* &>/dev/null
             attackSpecific $1
 }
 
@@ -155,8 +157,7 @@ fi
 main(){
         checkUtils
         mkdir -p hscollector
-        rm -rf ./hscollector/*
-        #cleanup
+        cleanup
 }
 
 
@@ -166,8 +167,7 @@ if [[ $1 != "" ]] && [[ $2 != "" ]];then
                 interface=$1
                 checkUtils
                 mkdir -p hscollector
-                rm -rf ./hscollector/*
-
+                cleanup
                 airmon-ng start $interface >/dev/null
 
                 if [[ $2 == "a" ]];then
