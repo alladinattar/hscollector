@@ -240,9 +240,8 @@ main(){
 
 
 
-if [[ $1 != "" ]] && [[ $2 != "" ]] && [[ $3 != "" ]];then
+if [[ $1 != "" ]] && [[ $2 != "" ]];then
                 interface=$2
-                serverAddr=$3
                 checkUtils
                 airmon-ng start $interface >/dev/null
 
