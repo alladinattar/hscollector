@@ -169,11 +169,15 @@ if [[ $1 != "" ]] && [[ $2 != "" ]];then
                                 echo "Enter BSSID of AP"
                                 exit 1
                         fi
-                        echo $3 $channel
+                        if [[ $4 == "" ]];then
+                                channel=$4
+                                echo "Enter channel of AP"
+                                exit 1
+                        fi
+
+                        echo "BSSID:" $3 " Channel: "$channel
                         attackSpecific $3 $4 
                 fi
-                
                 exit 0
-
 fi
 main 
