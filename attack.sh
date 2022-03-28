@@ -33,10 +33,10 @@ checkHandshakes() {
         #trap 'cleanup' EXIT
         printf "\n"
         echo "Check handshakes..."
-        cleanout=$(wpaclean ./hscollector/cleancap.cap /home/kali/hscollector/shakes-01.cap)
+        cleanout=$(wpaclean ./hscollector/cleancap.cap ./hscollector/shakes-01.cap)
         echo $cleanout
         if [[ "$cleanout" == *"Net "* ]]; then
-                output=$(cap2hccapx ./hscollector/cleancap.cap /home/kali/hscollector/cleanshakes.hccapx)
+                output=$(cap2hccapx ./hscollector/cleancap.cap ./hscollector/cleanshakes.hccapx)
                 echo $output
                 if [[ "$output" != *"Written 0"* ]]; then
                         printf "\033[32mHandshakes detected!!!\033[0m\n"
@@ -57,7 +57,7 @@ checkHandshakes() {
                 printf "\033[31mNo handshakes\033[0m\n"
                 rm ./hscollector/cleanshakes.hccapx >/dev/null
         fi
-        rm cleancap.cap > /dev/null
+        #rm cleancap.cap > /dev/null
 }
 
 airodumpPID=""
@@ -123,8 +123,7 @@ attackSpecific(){
                           sleep 30
                           echo "airodumpPID:"$airodumpPID
                           kill -9 $airodumpPID
-                          #checkHandshakes
-                          #rm ./hscollector/shakes-01.* >/dev/null
+                          checkHandshakes
                           break
                   else
                         continue
@@ -132,7 +131,8 @@ attackSpecific(){
                   printf "\033[31mNo this AP\033[0m\n"
 
             done < ./hscollector/shakesCollector-01.kismet.csv
-            #rm ./hscollector/shakes* &>/dev/null
+            rm ./hscollector/shakesCollector* &>/dev/null
+            rm ./hscollector/shakes* &>/dev/null
 }
 
 cleanup(){
@@ -153,6 +153,7 @@ fi
 main(){
         checkUtils
         mkdir -p hscollector
+        rm -rf ./hscollector/*
         #cleanup
 }
 
@@ -162,6 +163,9 @@ main(){
 if [[ $1 != "" ]] && [[ $2 != "" ]];then
                 interface=$1
                 checkUtils
+                mkdir -p hscollector
+                rm -rf ./hscollector/*
+
                 airmon-ng start $interface >/dev/null
 
                 if [[ $2 == "a" ]];then
