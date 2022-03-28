@@ -28,9 +28,12 @@ All instructions are carried out in a chroot environment (e.g. kali linux)
     ```
 ## Usage
 ```
-./attack.sh [ p|a ] addr
+./attack.sh interface [ p|a|s ] [BSSID]
 ```
    a - active mode  
-   p - passive mode  
-   addr - hashcat server ip
- 
+   p - passive mode 
+   s - attack specific target by MAC address
+### Example
+```
+./attack.sh wlo0mon s E6:18:6B:1C:DE:74
+```
