@@ -31,7 +31,7 @@ All instructions are carried out in a chroot environment (e.g. kali linux)
 ./attack.sh interface [ p|a|s ] [BSSID]
 ```
    a - active mode  
-   p - passive mode 
+   p - passive mode
    s - attack specific target by MAC address
 ### Example
 ```
