@@ -49,6 +49,7 @@ checkHandshakes() {
                                 chmod 777 -R ./hscollector/shakes
                                 mv ./hscollector/cleanshakes.hccapx ./hscollector/shakes/shake-$time
                         fi
+                        exit 0
                  else
                         printf "\033[31mNo handshakes\033[0m\n"
                         rm ./hscollector/cleanshakes.hccapx >/dev/null
@@ -133,6 +134,7 @@ attackSpecific(){
             done < ./hscollector/shakesCollector-01.kismet.csv
             rm ./hscollector/shakesCollector* &>/dev/null
             rm ./hscollector/shakes* &>/dev/null
+            attackSpecific $1
 }
 
 cleanup(){
